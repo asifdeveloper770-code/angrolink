@@ -90,7 +90,7 @@ function Home() {
       <section className="relative isolate overflow-hidden surface-forest">
         <div className="pointer-events-none absolute inset-0 grid-mesh text-primary-foreground/70" aria-hidden />
         <div
-          className="pointer-events-none absolute -right-40 -top-40 h-[36rem] w-[36rem] rounded-full bg-gold/20 blur-[120px]"
+          className="pointer-events-none absolute -right-40 -top-40 h-36rem w-36rem rounded-full bg-gold/20 blur-[120px]"
           aria-hidden
         />
         <DataPixels tone="light" />
@@ -105,7 +105,7 @@ function Home() {
             </h1>
           </Reveal>
           <Reveal delay={140}>
-            <div className="mt-7 h-px w-24 bg-gradient-to-r from-gold to-transparent" aria-hidden />
+            <div className="mt-7 h-px w-24 bg-linear-to-r from-gold to-transparent" aria-hidden />
           </Reveal>
           <Reveal delay={160}>
             <p className="mt-7 max-w-xl text-base leading-relaxed text-primary-foreground/75 sm:text-lg">
@@ -117,8 +117,13 @@ function Home() {
           <Reveal delay={230}>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
               <Button asChild variant="gold" size="lg">
-                <Link to="/partner">
+                <Link to="/investment-partnership">
                   Partner With Us <ArrowRight />
+                </Link>
+              </Button>
+              <Button asChild variant="secondary" size="lg">
+                <Link to="/shop">
+                  Buy Commodities <ArrowRight />
                 </Link>
               </Button>
               <Button asChild variant="outlineLight" size="lg">
@@ -155,10 +160,10 @@ function Home() {
                   width={1600}
                   height={1200}
                   fetchPriority="high"
-                  className="aspect-[4/3] w-full object-cover sm:aspect-[5/4]"
+                  className="aspect-4/3 w-full object-cover sm:aspect-5/4 "
                 />
                 <div
-                  className="absolute inset-0 bg-gradient-to-t from-primary-deep/90 via-primary-deep/5 to-transparent"
+                  className="absolute inset-0 bg-linear-to-r from-primary-deep/90 via-primary-deep/5 to-transparent"
                   aria-hidden
                 />
                 <figcaption className="absolute inset-x-0 bottom-0 flex items-center gap-3 p-5 sm:p-6">

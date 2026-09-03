@@ -15,6 +15,7 @@ import { Route as CartRouteImport } from './routes/cart'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as InvestmentPartnershipRouteImport } from './routes/investment-partnership'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as PartnerRouteImport } from './routes/partner'
@@ -50,6 +51,11 @@ const ContactRoute = ContactRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InvestmentPartnershipRoute = InvestmentPartnershipRouteImport.update({
+  id: '/investment-partnership',
+  path: '/investment-partnership',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KnowledgeRoute = KnowledgeRouteImport.update({
@@ -90,6 +96,7 @@ export interface FileRoutesByFullPath {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/investment-partnership': typeof InvestmentPartnershipRoute
   '/knowledge': typeof KnowledgeRoute
   '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/investment-partnership': typeof InvestmentPartnershipRoute
   '/knowledge': typeof KnowledgeRoute
   '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/checkout': typeof CheckoutRoute
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
+  '/investment-partnership': typeof InvestmentPartnershipRoute
   '/knowledge': typeof KnowledgeRoute
   '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
@@ -135,6 +144,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/dashboard'
+    | '/investment-partnership'
     | '/knowledge'
     | '/login'
     | '/partner'
@@ -149,6 +159,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/dashboard'
+    | '/investment-partnership'
     | '/knowledge'
     | '/login'
     | '/partner'
@@ -163,6 +174,7 @@ export interface FileRouteTypes {
     | '/checkout'
     | '/contact'
     | '/dashboard'
+    | '/investment-partnership'
     | '/knowledge'
     | '/login'
     | '/partner'
@@ -178,6 +190,7 @@ export interface RootRouteChildren {
   CheckoutRoute: typeof CheckoutRoute
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
+  InvestmentPartnershipRoute: typeof InvestmentPartnershipRoute
   KnowledgeRoute: typeof KnowledgeRoute
   LoginRoute: typeof LoginRoute
   PartnerRoute: typeof PartnerRoute
@@ -228,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/investment-partnership': {
+      id: '/investment-partnership'
+      path: '/investment-partnership'
+      fullPath: '/investment-partnership'
+      preLoaderRoute: typeof InvestmentPartnershipRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/knowledge': {
@@ -282,6 +302,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutRoute: CheckoutRoute,
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
+  InvestmentPartnershipRoute: InvestmentPartnershipRoute,
   KnowledgeRoute: KnowledgeRoute,
   LoginRoute: LoginRoute,
   PartnerRoute: PartnerRoute,

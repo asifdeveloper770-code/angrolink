@@ -87,6 +87,10 @@ export function Footer() {
               <span>Westlands Commercial Hub, Nairobi, Kenya</span>
             </li>
             <li className="flex gap-2">
+              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
+              <span>⁠New York, New York, United States.</span>
+            </li>
+            <li className="flex gap-2">
               <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
               <span>partnerships@agrilinkkakuma.co.ke</span>
             </li>

@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env['VITE_SUPABASE_URL'] || '';
+const supabaseAnonKey = import.meta.env['VITE_SUPABASE_ANON_KEY'] || '';
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -54,7 +54,7 @@ export async function submitContactForm(data: ContactSubmission) {
       .from('contacts')
       .insert([data])
       .select();
-    
+
     if (error) throw error;
     return { success: true, data: result };
   } catch (error) {
@@ -69,7 +69,7 @@ export async function submitCheckoutOrder(data: CheckoutOrder) {
       .from('orders')
       .insert([data])
       .select();
-    
+
     if (error) throw error;
     return { success: true, data: result };
   } catch (error) {
@@ -84,7 +84,7 @@ export async function getServices() {
       .from('services')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -99,7 +99,7 @@ export async function addService(service: ServiceEntry) {
       .from('services')
       .insert([service])
       .select();
-    
+
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -115,7 +115,7 @@ export async function updateService(id: string, service: Partial<ServiceEntry>) 
       .update(service)
       .eq('id', id)
       .select();
-    
+
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -130,7 +130,7 @@ export async function deleteService(id: string) {
       .from('services')
       .delete()
       .eq('id', id);
-    
+
     if (error) throw error;
     return { success: true };
   } catch (error) {
@@ -145,7 +145,7 @@ export async function getKnowledgeHub() {
       .from('knowledge_hub')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -160,7 +160,7 @@ export async function addKnowledgeArticle(article: KnowledgeHubArticle) {
       .from('knowledge_hub')
       .insert([article])
       .select();
-    
+
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -175,7 +175,7 @@ export async function getOrders() {
       .from('orders')
       .select('*')
       .order('created_at', { ascending: false });
-    
+
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
@@ -187,14 +187,83 @@ export async function getOrders() {
 export async function getContacts() {
   try {
     const { data, error } = await supabase
-      .from('contacts')
-      .select('*')
-      .order('created_at', { ascending: false });
-    
-    if (error) throw error;
-    return { success: true, data };
+      .from("contacts")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching contacts:", error);
+      return {
+        success: false,
+        data: [],
+        error: error.message,
+      };
+    }
+
+    return {
+      success: true,
+      data: data || [],
+    };
   } catch (error) {
-    console.error('Error fetching contacts:', error);
-    return { success: false, error };
+    console.error("Error fetching contacts:", error);
+
+    return {
+      success: false,
+      data: [],
+      error: "Failed to fetch contacts",
+    };
   }
+}
+export async function updateKnowledgeArticle(
+  id: string,
+  article: KnowledgeHubArticle
+) {
+  const { data, error } = await supabase
+    .from("knowledge_hub")
+    .update({
+      title: article.title,
+      content: article.content,
+      category: article.category,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error updating knowledge article:", error);
+
+    return {
+      success: false,
+      data: null,
+      error,
+    };
+  }
+
+  return {
+    success: true,
+    data,
+    error: null,
+  };
+}
+
+export async function deleteKnowledgeArticle(id: string) {
+  const { error } = await supabase
+    .from("knowledge_hub")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    console.error("Error deleting knowledge article:", error);
+
+    return {
+      success: false,
+      error,
+    };
+  }
+
+  return {
+    success: true,
+    error: null,
+  };
 }

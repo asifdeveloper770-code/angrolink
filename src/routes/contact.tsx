@@ -67,7 +67,16 @@ function Contact() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.currentTarget).entries());
+    const formData = new FormData(e.currentTarget);
+    const rawData = Object.fromEntries(formData.entries()) as Record<string, string | undefined>;
+    const data = {
+      name: String(rawData["name"] ?? "").trim(),
+      email: String(rawData["email"] ?? "").trim(),
+      organisation: String(rawData["organisation"] ?? "").trim(),
+      department: String(rawData["department"] ?? "").trim(),
+      message: String(rawData["message"] ?? "").trim(),
+    };
+
     const result = schema.safeParse(data);
     if (!result.success) {
       const next: Record<string, string> = {};
@@ -80,20 +89,19 @@ function Contact() {
       return;
     }
     setErrors({});
-    
-    // Submit to Supabase
+
     const submitResult = await submitContactForm({
-      name: String(data.name),
-      email: String(data.email),
-      phone: data.organisation ? String(data.organisation) : undefined,
-      subject: String(data.department),
-      message: String(data.message),
+      name: data.name,
+      email: data.email,
+      subject: data.department,
+      message: data.message,
+      ...(data.organisation ? { phone: data.organisation } : {}),
     });
-    
+
     if (submitResult.success) {
       setSent(true);
       toast.success("Message sent. We reply within one business day.");
-      e.currentTarget.reset();
+      
     } else {
       toast.error("Failed to send message. Please try again.");
     }

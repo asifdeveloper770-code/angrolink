@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
+import { useNavigate } from "@tanstack/react-router";
+import AdminProductsPage from "@/components/admin/products";
 import {
   Table,
   TableBody,
@@ -23,12 +25,15 @@ import {
   deleteService,
   getKnowledgeHub,
   addKnowledgeArticle,
+  updateKnowledgeArticle,
+  deleteKnowledgeArticle,
   getOrders,
   getContacts,
   type ServiceEntry,
   type KnowledgeHubArticle,
+  supabase,
 } from "@/lib/supabase";
-import { AlertCircle, Trash2, Edit2 } from "lucide-react";
+import { AlertCircle, Trash2, Edit2, X } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
@@ -49,6 +54,24 @@ interface EditingItem {
   data: any;
 }
 
+function getErrorMessage(error: unknown, fallback: string) {
+  if (typeof error === "string") {
+    return error;
+  }
+
+  if (error && typeof error === "object") {
+    if ("message" in error && typeof error.message === "string") {
+      return error.message;
+    }
+
+    if ("details" in error && typeof error.details === "string") {
+      return error.details;
+    }
+  }
+
+  return fallback;
+}
+
 function Dashboard() {
   const [services, setServices] = useState<ServiceEntry[]>([]);
   const [articles, setArticles] = useState<KnowledgeHubArticle[]>([]);
@@ -56,10 +79,77 @@ function Dashboard() {
   const [contacts, setContacts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EditingItem | null>(null);
+  const navigate = useNavigate();
+  const [authLoading, setAuthLoading] = useState(true);
+  const PAGE_SIZE = 10;
+
+  const [servicePage, setServicePage] = useState(1);
+  const [knowledgePage, setKnowledgePage] = useState(1);
+  const [orderPage, setOrderPage] = useState(1);
+  const [contactPage, setContactPage] = useState(1);
+
+  const paginatedServices = services.slice(
+    (servicePage - 1) * PAGE_SIZE,
+    servicePage * PAGE_SIZE
+  );
+
+  const paginatedArticles = articles.slice(
+    (knowledgePage - 1) * PAGE_SIZE,
+    knowledgePage * PAGE_SIZE
+  );
+
+  const paginatedOrders = orders.slice(
+    (orderPage - 1) * PAGE_SIZE,
+    orderPage * PAGE_SIZE
+  );
+
+  const paginatedContacts = contacts.slice(
+    (contactPage - 1) * PAGE_SIZE,
+    contactPage * PAGE_SIZE
+  );
+
+  const serviceTotalPages = Math.max(
+    1,
+    Math.ceil(services.length / PAGE_SIZE)
+  );
+
+  const knowledgeTotalPages = Math.max(
+    1,
+    Math.ceil(articles.length / PAGE_SIZE)
+  );
+
+  const orderTotalPages = Math.max(
+    1,
+    Math.ceil(orders.length / PAGE_SIZE)
+  );
+
+  const contactTotalPages = Math.max(
+    1,
+    Math.ceil(contacts.length / PAGE_SIZE)
+  );
 
   useEffect(() => {
-    loadData();
+    checkAuth();
   }, []);
+
+  async function checkAuth() {
+    setAuthLoading(true);
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+
+    if (!session) {
+      navigate({
+        to: "/login",
+        replace: true,
+      });
+      return;
+    }
+
+    setAuthLoading(false);
+    loadData();
+  }
 
   async function loadData() {
     setLoading(true);
@@ -83,59 +173,103 @@ function Dashboard() {
     }
   }
 
-  async function handleServiceSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleServiceSubmit(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
+
     const serviceData: ServiceEntry = {
-      title: String(formData.get("title")),
-      description: String(formData.get("description")),
-      category: String(formData.get("category")),
+      title: String(formData.get("title") || "").trim(),
+      description: String(formData.get("description") || "").trim(),
+      category: String(formData.get("category") || "").trim(),
     };
 
+    if (!serviceData.title) {
+      toast.error("Service title is required");
+      return;
+    }
+
     try {
-      let result;
-      if (editing?.type === "service" && editing.id) {
-        result = await updateService(editing.id, serviceData);
-      } else {
-        result = await addService(serviceData);
+      const result =
+        editing?.type === "service" && editing.id
+          ? await updateService(editing.id, serviceData)
+          : await addService(serviceData);
+
+      if (!result.success) {
+        toast.error(
+          getErrorMessage(result.error, "Failed to save service")
+        );
+        return;
       }
 
-      if (result.success) {
-        toast.success(editing?.id ? "Service updated" : "Service added");
-        setEditing(null);
-        await loadData();
-        e.currentTarget.reset();
-      } else {
-        toast.error("Failed to save service");
-      }
+      toast.success(
+        editing?.type === "service"
+          ? "Service updated successfully"
+          : "Service added successfully"
+      );
+
+      setEditing(null);
+      setServicePage(1);
+      await loadData();
     } catch (error) {
-      toast.error("Error saving service");
       console.error(error);
+      toast.error("Error saving service");
     }
   }
 
-  async function handleArticleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleArticleSubmit(
+    e: React.FormEvent<HTMLFormElement>
+  ) {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
+
     const articleData: KnowledgeHubArticle = {
-      title: String(formData.get("title")),
-      content: String(formData.get("content")),
-      category: String(formData.get("category")),
+      title: String(formData.get("title") || "").trim(),
+      content: String(formData.get("content") || "").trim(),
+      category: String(formData.get("category") || "").trim(),
     };
 
+    if (!articleData.title) {
+      toast.error("Article title is required");
+      return;
+    }
+
+    if (!articleData.content) {
+      toast.error("Article content is required");
+      return;
+    }
+
     try {
-      const result = await addKnowledgeArticle(articleData);
-      if (result.success) {
-        toast.success("Article added");
-        setEditing(null);
-        await loadData();
-        e.currentTarget.reset();
-      } else {
-        toast.error("Failed to add article");
+      const result =
+        editing?.type === "article" && editing.id
+          ? await updateKnowledgeArticle(
+            editing.id,
+            articleData
+          )
+          : await addKnowledgeArticle(articleData);
+
+      if (!result.success) {
+        toast.error(
+          getErrorMessage(result.error, "Failed to save article")
+        );
+        return;
       }
+
+      toast.success(
+        editing?.type === "article"
+          ? "Article updated successfully"
+          : "Article added successfully"
+      );
+
+      setEditing(null);
+      setKnowledgePage(1);
+      await loadData();
     } catch (error) {
-      toast.error("Error adding article");
       console.error(error);
+      toast.error("Error saving article");
     }
   }
 
@@ -155,7 +289,70 @@ function Dashboard() {
       }
     }
   }
+  async function handleDeleteArticle(id: string) {
+    if (
+      !confirm(
+        "Are you sure you want to delete this knowledge article?"
+      )
+    ) {
+      return;
+    }
 
+    try {
+      const result = await deleteKnowledgeArticle(id);
+
+      if (result.success) {
+        toast.success("Article deleted");
+        await loadData();
+
+        // Keep page valid after deletion
+        setKnowledgePage((currentPage) =>
+          Math.min(
+            currentPage,
+            Math.max(
+              1,
+              Math.ceil(
+                (articles.length - 1) / PAGE_SIZE
+              )
+            )
+          )
+        );
+      } else {
+        toast.error(
+          getErrorMessage(result.error, "Failed to delete article")
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error deleting article");
+    }
+  }
+  async function handleLogout() {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      toast.error("Failed to log out.");
+      return;
+    }
+
+    navigate({
+      to: "/login",
+      replace: true,
+    });
+  }
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin mx-auto mb-3 h-8 w-8 rounded-full border-2 border-primary border-t-transparent" />
+          <p className="text-muted-foreground">
+            Checking authentication...
+          </p>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-background">
       <section className="relative isolate overflow-hidden surface-forest">
@@ -174,143 +371,273 @@ function Dashboard() {
           <div className="text-center py-12">Loading data...</div>
         ) : (
           <Tabs defaultValue="services" className="space-y-4">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="services">Services</TabsTrigger>
-              <TabsTrigger value="knowledge">Knowledge Hub</TabsTrigger>
-              <TabsTrigger value="orders">Orders</TabsTrigger>
-              <TabsTrigger value="contacts">Contacts</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-6">
+              <TabsTrigger value="services">
+                Services
+              </TabsTrigger>
+
+              <TabsTrigger value="products">
+                Products
+              </TabsTrigger>
+
+              <TabsTrigger value="knowledge">
+                Knowledge Hub
+              </TabsTrigger>
+
+              <TabsTrigger value="orders">
+                Orders
+              </TabsTrigger>
+
+              <TabsTrigger value="contacts">
+                Contacts
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="logout"
+                onClick={handleLogout}
+                className="text-destructive hover:bg-destructive/10"
+              >
+                Logout
+              </TabsTrigger>
             </TabsList>
 
             {/* Services Tab */}
             <TabsContent value="services" className="space-y-6">
-              <Card className="p-6">
-                <h2 className="text-xl font-bold mb-4">
-                  {editing?.type === "service" ? "Edit Service" : "Add New Service"}
-                </h2>
-                <form onSubmit={handleServiceSubmit} className="space-y-4">
+              <Card className="overflow-hidden">
+                <div className="flex items-center justify-between border-b p-6">
                   <div>
-                    <Label>Title</Label>
-                    <Input
-                      name="title"
-                      placeholder="Service title"
-                      defaultValue={editing?.type === "service" ? editing.data?.title : ""}
-                    />
-                  </div>
-                  <div>
-                    <Label>Category</Label>
-                    <Input
-                      name="category"
-                      placeholder="e.g., Aggregation, Logistics"
-                      defaultValue={editing?.type === "service" ? editing.data?.category : ""}
-                    />
-                  </div>
-                  <div>
-                    <Label>Description</Label>
-                    <Textarea
-                      name="description"
-                      placeholder="Service description"
-                      rows={4}
-                      defaultValue={editing?.type === "service" ? editing.data?.description : ""}
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button type="submit" variant="gold">
-                      {editing?.type === "service" ? "Update" : "Add"} Service
-                    </Button>
-                    {editing?.type === "service" && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={() => setEditing(null)}
-                      >
-                        Cancel
-                      </Button>
-                    )}
-                  </div>
-                </form>
-              </Card>
+                    <h3 className="text-lg font-bold">
+                      All Services
+                    </h3>
 
-              <Card className="p-6">
-                <h3 className="text-lg font-bold mb-4">All Services</h3>
-                <div className="space-y-2">
-                  {services.length === 0 ? (
-                    <p className="text-muted-foreground">No services added yet</p>
-                  ) : (
-                    services.map((service) => (
-                      <div key={service.id} className="flex items-center justify-between p-3 border rounded">
-                        <div>
-                          <p className="font-medium">{service.title}</p>
-                          <p className="text-sm text-muted-foreground">{service.category}</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() =>
-                              setEditing({
-                                type: "service",
-                                id: service.id,
-                                data: service,
-                              })
-                            }
-                          >
-                            <Edit2 className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => service.id && handleDeleteService(service.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))
-                  )}
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {services.length} total services
+                    </p>
+                  </div>
+
+                  <Button
+                    variant="gold"
+                    onClick={() =>
+                      setEditing({
+                        type: "service",
+                        data: {
+                          title: "",
+                          description: "",
+                          category: "",
+                        },
+                      })
+                    }
+                  >
+                    Add Service
+                  </Button>
                 </div>
+
+                <div className="overflow-x-auto p-6">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead className="text-right">
+                          Actions
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+
+                    <TableBody>
+                      {paginatedServices.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={4}
+                            className="py-10 text-center text-muted-foreground"
+                          >
+                            No services found
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        paginatedServices.map((service) => (
+                          <TableRow key={service.id}>
+                            <TableCell className="font-medium">
+                              {service.title}
+                            </TableCell>
+
+                            <TableCell>
+                              {service.category || "—"}
+                            </TableCell>
+
+                            <TableCell className="max-w-md truncate">
+                              {service.description || "—"}
+                            </TableCell>
+
+                            <TableCell>
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    if (!service.id) return;
+
+                                    setEditing({
+                                      type: "service",
+                                      id: service.id,
+                                      data: service,
+                                    });
+                                  }}
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </Button>
+
+                                <Button
+                                  size="sm"
+                                  variant="destructive"
+                                  onClick={() => {
+                                    if (!service.id) return;
+                                    handleDeleteService(service.id);
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <Pagination
+                  page={servicePage}
+                  totalPages={serviceTotalPages}
+                  totalItems={services.length}
+                  pageSize={PAGE_SIZE}
+                  onPageChange={setServicePage}
+                />
               </Card>
+            </TabsContent>
+
+            {/* Products Tab */}
+            <TabsContent value="products" className="space-y-6">
+              <AdminProductsPage />
             </TabsContent>
 
             {/* Knowledge Hub Tab */}
             <TabsContent value="knowledge" className="space-y-6">
-              <Card className="p-6">
-                <h2 className="text-xl font-bold mb-4">Add Knowledge Article</h2>
-                <form onSubmit={handleArticleSubmit} className="space-y-4">
+              <Card className="overflow-hidden">
+                <div className="flex items-center justify-between border-b p-6">
                   <div>
-                    <Label>Title</Label>
-                    <Input name="title" placeholder="Article title" />
+                    <h3 className="text-lg font-bold">
+                      All Knowledge Articles
+                    </h3>
+
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      {articles.length} total articles
+                    </p>
                   </div>
-                  <div>
-                    <Label>Category</Label>
-                    <Input name="category" placeholder="e.g., Best Practices, Guidelines" />
-                  </div>
-                  <div>
-                    <Label>Content</Label>
-                    <Textarea name="content" placeholder="Article content" rows={6} />
-                  </div>
-                  <Button type="submit" variant="gold">
+
+                  <Button
+                    variant="gold"
+                    onClick={() =>
+                      setEditing({
+                        type: "article",
+                        data: {
+                          title: "",
+                          content: "",
+                          category: "",
+                        },
+                      })
+                    }
+                  >
                     Add Article
                   </Button>
-                </form>
-              </Card>
-
-              <Card className="p-6">
-                <h3 className="text-lg font-bold mb-4">All Articles</h3>
-                <div className="space-y-2">
-                  {articles.length === 0 ? (
-                    <p className="text-muted-foreground">No articles added yet</p>
-                  ) : (
-                    articles.map((article) => (
-                      <div key={article.id} className="p-3 border rounded">
-                        <p className="font-medium">{article.title}</p>
-                        <p className="text-sm text-muted-foreground">{article.category}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {new Date(article.created_at || "").toLocaleDateString()}
-                        </p>
-                      </div>
-                    ))
-                  )}
                 </div>
+
+                <div className="overflow-x-auto p-6">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Category</TableHead>
+                        <TableHead>Created</TableHead>
+                        <TableHead className="text-right">
+                          Actions
+                        </TableHead>
+                      </TableRow>
+                    </TableHeader>
+
+                    <TableBody>
+                      {paginatedArticles.length === 0 ? (
+                        <TableRow>
+                          <TableCell
+                            colSpan={4}
+                            className="py-10 text-center text-muted-foreground"
+                          >
+                            No articles found
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        paginatedArticles.map((article) => (
+                          <TableRow key={article.id}>
+                            <TableCell className="font-medium">
+                              {article.title}
+                            </TableCell>
+
+                            <TableCell>
+                              {article.category || "—"}
+                            </TableCell>
+
+                            <TableCell>
+                              {article.created_at
+                                ? new Date(
+                                  article.created_at
+                                ).toLocaleDateString()
+                                : "—"}
+                            </TableCell>
+
+                            <TableCell>
+                              <div className="flex justify-end gap-2">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => {
+                                    if (!article.id) return;
+
+                                    setEditing({
+                                      type: "article",
+                                      id: article.id,
+                                      data: article,
+                                    });
+                                  }}
+                                >
+                                  <Edit2 className="h-4 w-4" />
+                                </Button>
+
+                                <Button
+                                  size="sm"
+                                  onClick={() => {
+                                    if (!article.id) return;
+                                    handleDeleteArticle(article.id);
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+
+                <Pagination
+                  page={knowledgePage}
+                  totalPages={knowledgeTotalPages}
+                  totalItems={articles.length}
+                  pageSize={PAGE_SIZE}
+                  onPageChange={setKnowledgePage}
+                />
               </Card>
             </TabsContent>
 
@@ -337,7 +664,7 @@ function Dashboard() {
                           </TableCell>
                         </TableRow>
                       ) : (
-                        orders.map((order) => (
+                        paginatedOrders.map((order) => (
                           <TableRow key={order.id}>
                             <TableCell className="font-medium">{order.customer_name}</TableCell>
                             <TableCell>{order.email}</TableCell>
@@ -354,6 +681,13 @@ function Dashboard() {
                     </TableBody>
                   </Table>
                 </div>
+                <Pagination
+                  page={orderPage}
+                  totalPages={orderTotalPages}
+                  totalItems={orders.length}
+                  pageSize={PAGE_SIZE}
+                  onPageChange={setOrderPage}
+                />
               </Card>
             </TabsContent>
 
@@ -379,7 +713,7 @@ function Dashboard() {
                           </TableCell>
                         </TableRow>
                       ) : (
-                        contacts.map((contact) => (
+                        paginatedContacts.map((contact) => (
                           <TableRow key={contact.id}>
                             <TableCell className="font-medium">{contact.name}</TableCell>
                             <TableCell>{contact.email}</TableCell>
@@ -391,11 +725,286 @@ function Dashboard() {
                     </TableBody>
                   </Table>
                 </div>
+                <Pagination
+                  page={contactPage}
+                  totalPages={contactTotalPages}
+                  totalItems={contacts.length}
+                  pageSize={PAGE_SIZE}
+                  onPageChange={setContactPage}
+                />
               </Card>
             </TabsContent>
           </Tabs>
         )}
       </section>
+      {editing && (
+        <AdminEditModal
+          editing={editing}
+          onClose={() => setEditing(null)}
+          onServiceSubmit={handleServiceSubmit}
+          onArticleSubmit={handleArticleSubmit}
+        />
+      )}
+    </div>
+
+  );
+}
+
+function Pagination({
+  page,
+  totalPages,
+  totalItems,
+  pageSize,
+  onPageChange,
+}: {
+  page: number;
+  totalPages: number;
+  totalItems: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalItems === 0) return null;
+
+  const start = (page - 1) * pageSize + 1;
+  const end = Math.min(page * pageSize, totalItems);
+
+  const pages = Array.from(
+    { length: totalPages },
+    (_, index) => index + 1
+  );
+
+  return (
+    <div className="flex flex-col gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <p className="text-sm text-muted-foreground">
+        Showing {start}–{end} of {totalItems}
+      </p>
+
+      <div className="flex items-center gap-1">
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={page === 1}
+          onClick={() => onPageChange(page - 1)}
+        >
+          Previous
+        </Button>
+
+        {pages.map((pageNumber) => (
+          <Button
+            key={pageNumber}
+            size="sm"
+            variant={pageNumber === page ? "default" : "outline"}
+            onClick={() => onPageChange(pageNumber)}
+            className="min-w-9"
+          >
+            {pageNumber}
+          </Button>
+        ))}
+
+        <Button
+          variant="outline"
+          size="sm"
+          disabled={page === totalPages}
+          onClick={() => onPageChange(page + 1)}
+        >
+          Next
+        </Button>
+      </div>
+    </div>
+  );
+}
+function AdminEditModal({
+  editing,
+  onClose,
+  onServiceSubmit,
+  onArticleSubmit,
+}: {
+  editing: EditingItem;
+  onClose: () => void;
+  onServiceSubmit: (
+    e: React.FormEvent<HTMLFormElement>
+  ) => void;
+  onArticleSubmit: (
+    e: React.FormEvent<HTMLFormElement>
+  ) => void;
+}) {
+  const isService = editing.type === "service";
+  const data = editing.data || {};
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+    >
+      <div className="w-full max-w-2xl overflow-hidden rounded-xl bg-background shadow-2xl">
+        {/* Modal Header */}
+        <div className="flex items-center justify-between border-b px-6 py-4">
+          <div>
+            <h2 className="text-xl font-bold">
+              {editing.id
+                ? isService
+                  ? "Edit Service"
+                  : "Edit Knowledge Article"
+                : isService
+                  ? "Add Service"
+                  : "Add Knowledge Article"}
+            </h2>
+
+            <p className="mt-1 text-sm text-muted-foreground">
+              {editing.id
+                ? "Update the information below."
+                : isService
+                  ? "Create a new service."
+                  : "Create a new knowledge hub article."}
+            </p>
+          </div>
+
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            aria-label="Close modal"
+          >
+            <X className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* Service Form */}
+        {isService ? (
+          <form
+            onSubmit={onServiceSubmit}
+            className="space-y-5 p-6"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="service-title">
+                Title
+              </Label>
+
+              <Input
+                id="service-title"
+                name="title"
+                defaultValue={data.title || ""}
+                placeholder="Enter service title"
+                autoFocus
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="service-category">
+                Category
+              </Label>
+
+              <Input
+                id="service-category"
+                name="category"
+                defaultValue={data.category || ""}
+                placeholder="e.g. Agriculture, Logistics"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="service-description">
+                Description
+              </Label>
+
+              <Textarea
+                id="service-description"
+                name="description"
+                defaultValue={data.description || ""}
+                placeholder="Describe this service..."
+                rows={6}
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 border-t pt-5">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+
+              <Button type="submit" variant="gold">
+                {editing.id
+                  ? "Update Service"
+                  : "Add Service"}
+              </Button>
+            </div>
+          </form>
+        ) : (
+          /* Knowledge Article Form */
+          <form
+            onSubmit={onArticleSubmit}
+            className="space-y-5 p-6"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="article-title">
+                Title
+              </Label>
+
+              <Input
+                id="article-title"
+                name="title"
+                defaultValue={data.title || ""}
+                placeholder="Enter article title"
+                autoFocus
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="article-category">
+                Category
+              </Label>
+
+              <Input
+                id="article-category"
+                name="category"
+                defaultValue={data.category || ""}
+                placeholder="e.g. Agriculture, Farming"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="article-content">
+                Content
+              </Label>
+
+              <Textarea
+                id="article-content"
+                name="content"
+                defaultValue={data.content || ""}
+                placeholder="Write the knowledge article..."
+                rows={10}
+                required
+              />
+            </div>
+
+            <div className="flex justify-end gap-3 border-t pt-5">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+              >
+                Cancel
+              </Button>
+
+              <Button type="submit" variant="gold">
+                {editing.id
+                  ? "Update Article"
+                  : "Add Article"}
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
     </div>
   );
 }

@@ -16,6 +16,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as KnowledgeRouteImport } from './routes/knowledge'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as PartnerRouteImport } from './routes/partner'
 import { Route as ServicesRouteImport } from './routes/services'
 import { Route as ShopIndexRouteImport } from './routes/shop.index'
@@ -56,6 +57,11 @@ const KnowledgeRoute = KnowledgeRouteImport.update({
   path: '/knowledge',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PartnerRoute = PartnerRouteImport.update({
   id: '/partner',
   path: '/partner',
@@ -85,6 +91,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/knowledge': typeof KnowledgeRoute
+  '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
   '/services': typeof ServicesRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -98,6 +105,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/knowledge': typeof KnowledgeRoute
+  '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
   '/services': typeof ServicesRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -112,6 +120,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/dashboard': typeof DashboardRoute
   '/knowledge': typeof KnowledgeRoute
+  '/login': typeof LoginRoute
   '/partner': typeof PartnerRoute
   '/services': typeof ServicesRoute
   '/shop/$productId': typeof ShopProductIdRoute
@@ -127,6 +136,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/knowledge'
+    | '/login'
     | '/partner'
     | '/services'
     | '/shop/$productId'
@@ -140,6 +150,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/knowledge'
+    | '/login'
     | '/partner'
     | '/services'
     | '/shop/$productId'
@@ -153,6 +164,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/dashboard'
     | '/knowledge'
+    | '/login'
     | '/partner'
     | '/services'
     | '/shop/$productId'
@@ -167,6 +179,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   DashboardRoute: typeof DashboardRoute
   KnowledgeRoute: typeof KnowledgeRoute
+  LoginRoute: typeof LoginRoute
   PartnerRoute: typeof PartnerRoute
   ServicesRoute: typeof ServicesRoute
   ShopProductIdRoute: typeof ShopProductIdRoute
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof KnowledgeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/partner': {
       id: '/partner'
       path: '/partner'
@@ -263,6 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   DashboardRoute: DashboardRoute,
   KnowledgeRoute: KnowledgeRoute,
+  LoginRoute: LoginRoute,
   PartnerRoute: PartnerRoute,
   ServicesRoute: ServicesRoute,
   ShopProductIdRoute: ShopProductIdRoute,

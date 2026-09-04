@@ -286,7 +286,7 @@ function Shop() {
         <div className="mt-5 flex items-end justify-between border-t border-border pt-4">
           <div>
             <p className="font-display text-2xl font-extrabold text-primary">
-              KSH{p.pricePerUnit.toLocaleString()}
+              KSH {p.pricePerUnit.toLocaleString()}
             </p>
 
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground">

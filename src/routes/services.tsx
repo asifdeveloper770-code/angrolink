@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { Users, Truck, LineChart, ArrowRight, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/Reveal";
@@ -24,78 +26,11 @@ export const Route = createFileRoute("/services")({
   component: Services,
 });
 
-const PILLARS = [
-  {
-    icon: Users,
-    title: "Agricultural Aggregation",
-    intro:
-      "We convert fragmented smallholder output into contract-grade lots buyers can underwrite.",
-    services: [
-      {
-        name: "Smallholder Crop Consolidation",
-        copy: "41 producer groups feeding six collection points with digital weigh-in and instant mobile payment.",
-      },
-      {
-        name: "Quality Grading",
-        copy: "Moisture, purity and aflatoxin testing at intake with lot-level certificates.",
-      },
-      {
-        name: "Solar-Powered Cold Storage",
-        copy: "Off-grid cold rooms extending fresh-produce shelf life from 2 days to 14.",
-      },
-      {
-        name: "Producer Training",
-        copy: "Field agronomy, post-harvest handling and climate-smart rotation curricula.",
-      },
-    ],
-  },
-  {
-    icon: Truck,
-    title: "End-to-End Logistics",
-    intro: "Movement engineered for unpaved corridors, long distances and heat load.",
-    services: [
-      {
-        name: "First & Last-Mile Transport",
-        copy: "Motorcycle and light-truck collection from remote plots onto trunk routes.",
-      },
-      {
-        name: "Cold-Chain Logistics",
-        copy: "Temperature-logged reefer movement with corridor-level breach alerts.",
-      },
-      {
-        name: "Cross-Border Freight",
-        copy: "Documentation, clearance and consolidated freight into South Sudan and Uganda.",
-      },
-      {
-        name: "Fleet Management Integration",
-        copy: "Owner-operators onboarded with telematics, route allocation and guaranteed settlement.",
-      },
-    ],
-  },
-  {
-    icon: LineChart,
-    title: "Market Intelligence",
-    intro: "The data layer that prices risk before a truck leaves the yard.",
-    services: [
-      {
-        name: "Real-Time Commodity Pricing",
-        copy: "Daily farm-gate and terminal-market price feeds across eight commodities.",
-      },
-      {
-        name: "Supply & Demand Forecasting Maps",
-        copy: "Seasonal production surface modelling matched against institutional demand pipelines.",
-      },
-      {
-        name: "Climate Fragility Reporting",
-        copy: "Rainfall variability, rangeland stress and conflict indicators scored per corridor.",
-      },
-      {
-        name: "B2B Digital Linkage",
-        copy: "Verified buyer-seller matching with contract templates and escrowed milestones.",
-      },
-    ],
-  },
-];
+const PILLAR_ICONS = {
+  "agricultural-aggregation": Users,
+  "end-to-end-logistics": Truck,
+  "market-intelligence": LineChart,
+} as const;
 
 const CORRIDORS = [
   { id: "kakuma", name: "Kakuma Hub", x: 30, y: 42, type: "hub" },
@@ -123,7 +58,83 @@ function point(id: string) {
   return { x: n.x, y: n.y };
 }
 
+type ServiceRow = {
+  id: string;
+  pillar_slug: string;
+  pillar_title: string;
+  pillar_intro: string;
+  service_name: string;
+  service_copy: string;
+  sort_order: number;
+  active: boolean;
+};
+
+type ServicePillar = {
+  slug: string;
+  title: string;
+  intro: string;
+  services: {
+    name: string;
+    copy: string;
+  }[];
+};
+
 function Services() {
+  const [pillars, setPillars] = useState<ServicePillar[]>([]);
+  const [loadingServices, setLoadingServices] = useState(true);
+  
+  useEffect(() => {
+    async function loadServices() {
+      try {
+        const { data, error } = await supabase
+          .from("services")
+          .select("*")
+          .eq("active", true)
+          .order("pillar_slug", { ascending: true })
+          .order("sort_order", { ascending: true });
+
+        if (error) {
+          throw error;
+        }
+
+        const rows = (data ?? []) as ServiceRow[];
+
+        const grouped = rows.reduce<ServicePillar[]>((acc, row) => {
+          let pillar = acc.find(
+            (item) => item.slug === row.pillar_slug
+          );
+
+          if (!pillar) {
+            pillar = {
+              slug: row.pillar_slug,
+              title: row.pillar_title,
+              intro: row.pillar_intro,
+              services: [],
+            };
+
+            acc.push(pillar);
+          }
+
+          pillar.services.push({
+            name: row.service_name,
+            copy: row.service_copy,
+          });
+
+          return acc;
+        }, []);
+
+        setPillars(grouped);
+      } catch (error) {
+        console.error("Error loading services:", error);
+        setPillars([]);
+      } finally {
+        setLoadingServices(false);
+      }
+    }
+
+    loadServices();
+  }, []);
+  
   return (
     <>
       <section className="relative isolate overflow-hidden surface-forest">
@@ -142,33 +153,67 @@ function Services() {
       </section>
 
       <section className="mx-auto max-w-7xl space-y-16 px-4 py-20 sm:px-6 lg:px-8">
-        {PILLARS.map((pillar, pi) => (
-          <Reveal key={pillar.title} as="section">
-            <div className="flex min-w-0 items-center gap-4">
-              <span className="grid h-14 w-14 shrink-0 place-items-center rounded-xl surface-forest">
-                <pillar.icon className="h-7 w-7" strokeWidth={1.4} />
-              </span>
-              <div className="min-w-0">
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">
-                  Pillar 0{pi + 1}
+        {loadingServices ? (
+          <div className="py-12 text-center text-muted-foreground">
+            Loading services...
+          </div>
+        ) : pillars.length === 0 ? (
+          <div className="py-12 text-center text-muted-foreground">
+            No services available.
+          </div>
+        ) : (
+          pillars.map((pillar, pi) => {
+            const Icon =
+              PILLAR_ICONS[
+              pillar.slug as keyof typeof PILLAR_ICONS
+              ] ?? Users;
+
+            return (
+              <Reveal key={pillar.slug} as="section">
+                <div className="flex min-w-0 items-center gap-4">
+                  <span className="grid h-14 w-14 shrink-0 place-items-center rounded-xl surface-forest">
+                    <Icon className="h-7 w-7" strokeWidth={1.4} />
+                  </span>
+
+                  <div className="min-w-0">
+                    <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">
+                      Pillar 0{pi + 1}
+                    </p>
+
+                    <h2 className="text-2xl font-extrabold uppercase sm:text-3xl">
+                      {pillar.title}
+                    </h2>
+                  </div>
+                </div>
+
+                <p className="mt-4 max-w-2xl text-muted-foreground">
+                  {pillar.intro}
                 </p>
-                <h2 className="text-2xl font-extrabold uppercase sm:text-3xl">{pillar.title}</h2>
-              </div>
-            </div>
-            <p className="mt-4 max-w-2xl text-muted-foreground">{pillar.intro}</p>
-            <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-              {pillar.services.map((s, i) => (
-                <Reveal key={s.name} delay={i * 70}>
-                  <article className="lift group h-full rounded-xl border border-border bg-card p-6 hover:border-accent">
-                    <span className="block h-1 w-10 rounded-full bg-gold transition-all duration-300 group-hover:w-16" />
-                    <h3 className="mt-5 font-bold leading-snug">{s.name}</h3>
-                    <p className="mt-3 text-sm text-muted-foreground">{s.copy}</p>
-                  </article>
-                </Reveal>
-              ))}
-            </div>
-          </Reveal>
-        ))}
+
+                <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                  {pillar.services.map((service, i) => (
+                    <Reveal
+                      key={service.name}
+                      delay={i * 70}
+                    >
+                      <article className="lift group h-full rounded-xl border border-border bg-card p-6 hover:border-accent">
+                        <span className="block h-1 w-10 rounded-full bg-gold transition-all duration-300 group-hover:w-16" />
+
+                        <h3 className="mt-5 font-bold leading-snug">
+                          {service.name}
+                        </h3>
+
+                        <p className="mt-3 text-sm text-muted-foreground">
+                          {service.copy}
+                        </p>
+                      </article>
+                    </Reveal>
+                  ))}
+                </div>
+              </Reveal>
+            );
+          })
+        )}
       </section>
 
       <section className="bg-secondary/50 py-20">

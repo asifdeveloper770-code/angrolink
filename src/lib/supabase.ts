@@ -29,24 +29,7 @@ export interface CheckoutOrder {
   created_at?: string;
   status?: string;
 }
-
-export interface ServiceEntry {
-  id?: string;
-  title: string;
-  description: string;
-  category: string;
-  created_at?: string;
-}
-
-export interface KnowledgeHubArticle {
-  id?: string;
-  title: string;
-  content: string;
-  category: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
+  
 // Supabase operations
 export async function submitContactForm(data: ContactSubmission) {
   try {
@@ -78,19 +61,41 @@ export async function submitCheckoutOrder(data: CheckoutOrder) {
   }
 }
 
-export async function getServices() {
-  try {
-    const { data, error } = await supabase
-      .from('services')
-      .select('*')
-      .order('created_at', { ascending: false });
+export interface ServiceEntry {
+  id?: string;
+  pillar_slug: string;
+  pillar_title: string;
+  pillar_intro: string;
+  service_name: string;
+  service_copy: string;
+  sort_order: number;
+  active: boolean;
+  created_at?: string;
+  updated_at?: string;
+}
 
-    if (error) throw error;
-    return { success: true, data };
-  } catch (error) {
-    console.error('Error fetching services:', error);
-    return { success: false, error };
+export async function getServices() {
+  const { data, error } = await supabase
+    .from("services")
+    .select("*")
+    .eq("active", true)
+    .order("pillar_slug", { ascending: true })
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("getServices error:", error);
+    return {
+      success: false,
+      data: [],
+      error,
+    };
   }
+
+  return {
+    success: true,
+    data: data as ServiceEntry[],
+    error: null,
+  };
 }
 
 export async function addService(service: ServiceEntry) {
@@ -139,19 +144,38 @@ export async function deleteService(id: string) {
   }
 }
 
-export async function getKnowledgeHub() {
-  try {
-    const { data, error } = await supabase
-      .from('knowledge_hub')
-      .select('*')
-      .order('created_at', { ascending: false });
+export interface KnowledgeHubArticle {
+  id?: string;
+  title: string;
+  content: string;
+  category: string;
+  excerpt?: string | null;
+  read_time?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
 
-    if (error) throw error;
-    return { success: true, data };
-  } catch (error) {
-    console.error('Error fetching knowledge hub articles:', error);
-    return { success: false, error };
+export async function getKnowledgeHub() {
+  const { data, error } = await supabase
+    .from("knowledge_hub")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("getKnowledgeHub error:", error);
+
+    return {
+      success: false,
+      data: [],
+      error,
+    };
   }
+
+  return {
+    success: true,
+    data: data as KnowledgeHubArticle[],
+    error: null,
+  };
 }
 
 export async function addKnowledgeArticle(article: KnowledgeHubArticle) {

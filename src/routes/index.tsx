@@ -109,9 +109,7 @@ function Home() {
           </Reveal>
           <Reveal delay={160}>
             <p className="mt-7 max-w-xl text-base leading-relaxed text-primary-foreground/75 sm:text-lg">
-              We build the infrastructure that connects arid-land producers to formal markets —
-              aggregating harvests, securing cold-chain logistics and publishing the market
-              intelligence that makes fragile food systems investable.
+             we connect farmers directly to formal markets. We do this by gathering local harvests, providing reliable cold-chain storage, and sharing the critical market data needed to turn fragile food systems into secure, investable businesses.
             </p>
           </Reveal>
           <Reveal delay={230}>

@@ -236,78 +236,94 @@ function Shop() {
           <>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
               {list.map((p, i) => (
-                <Reveal
-                  key={p.id}
-                  delay={(i % 4) * 70}
-                >
-                  <article className="lift flex h-full flex-col rounded-xl border border-border bg-card p-6 hover:border-accent">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
-                        {p.category}
-                      </span>
+  <Reveal key={p.id} delay={(i % 4) * 70}>
+    <article className="lift flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card hover:border-accent">
+      
+      {/* Product Image */}
+      <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
+        {p.image ? (
+          <img
+            src={p.image}
+            alt={p.name}
+            className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+            No image available
+          </div>
+        )}
+      </div>
 
-                      {p.grade && (
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-accent">
-                          {p.grade}
-                        </span>
-                      )}
-                    </div>
+      {/* Product Content */}
+      <div className="flex flex-1 flex-col p-6">
+        <div className="flex items-center justify-between gap-2">
+          <span className="rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
+            {p.category}
+          </span>
 
-                    <h2 className="mt-4 text-lg font-bold leading-snug">
-                      {p.name}
-                    </h2>
+          {p.grade && (
+            <span className="text-[10px] font-bold uppercase tracking-wider text-accent">
+              {p.grade}
+            </span>
+          )}
+        </div>
 
-                    {p.origin && (
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        {p.origin}
-                      </p>
-                    )}
+        <h2 className="mt-4 text-lg font-bold leading-snug">
+          {p.name}
+        </h2>
 
-                    <p className="mt-3 flex-1 text-sm text-muted-foreground">
-                      {p.blurb}
-                    </p>
+        {p.origin && (
+          <p className="mt-2 text-xs text-muted-foreground">
+            {p.origin}
+          </p>
+        )}
 
-                    <div className="mt-5 flex items-end justify-between border-t border-border pt-4">
-                      <div>
-                        <p className="font-display text-2xl font-extrabold text-primary">
-                          $
-                          {p.pricePerUnit.toLocaleString()}
-                        </p>
+        <p className="mt-3 flex-1 text-sm text-muted-foreground">
+          {p.blurb}
+        </p>
 
-                        <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-                          per {p.unit} · MOQ {p.moq}
-                        </p>
-                      </div>
+        <div className="mt-5 flex items-end justify-between border-t border-border pt-4">
+          <div>
+            <p className="font-display text-2xl font-extrabold text-primary">
+              ${p.pricePerUnit.toLocaleString()}
+            </p>
 
-                      <Link
-                        to="/shop/$productId"
-                        params={{
-                          productId: p.id,
-                        }}
-                        className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-accent"
-                      >
-                        Details
-                        <ArrowUpRight className="h-3.5 w-3.5" />
-                      </Link>
-                    </div>
+            <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+              per {p.unit} · MOQ {p.moq}
+            </p>
+          </div>
 
-                    <Button
-                      variant="gold"
-                      className="mt-4"
-                      onClick={() => {
-                        add(p.id, p.moq);
+          <Link
+            to="/shop/$productId"
+            params={{
+              productId: p.id,
+            }}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-accent"
+          >
+            Details
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
 
-                        toast.success(
-                          `${p.name} added to quote cart (${p.moq} ${p.unit}).`
-                        );
-                      }}
-                    >
-                      <Plus />
-                      Add to quote
-                    </Button>
-                  </article>
-                </Reveal>
-              ))}
+        <Button
+          variant="gold"
+          className="mt-4"
+          onClick={() => {
+            add(p.id, p.moq);
+
+            toast.success(
+              `${p.name} added to quote cart (${p.moq} ${p.unit}).`
+            );
+          }}
+        >
+          <Plus />
+          Add to quote
+        </Button>
+      </div>
+    </article>
+  </Reveal>
+))}
             </div>
 
             {list.length === 0 && (

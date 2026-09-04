@@ -3,75 +3,75 @@ import { supabase } from "@/lib/supabase";
 
 export default function AdminProductsPage() {
 
-type Category = {
-  id: string;
-  name: string;
-  slug: string;
-};
+  type Category = {
+    id: string;
+    name: string;
+    slug: string;
+  };
 
-type Product = {
-  id: string;
-  category_id: string;
-  name: string;
-  slug: string | null;
-  description: string | null;
-  summary: string | null;
-  price_per_unit: number;
-  unit: string;
-  image: string | null;
-  stock: number;
-  moq: number;
-  origin: string | null;
-  grade: string | null;
-  lead: string | null;
-  blurb: string | null;
-  spec: string[];
-  active: boolean;
-  featured: boolean;
-  sort_order: number;
-};
+  type Product = {
+    id: string;
+    category_id: string;
+    name: string;
+    slug: string | null;
+    description: string | null;
+    summary: string | null;
+    price_per_unit: number;
+    unit: string;
+    image: string | null;
+    stock: number;
+    moq: number;
+    origin: string | null;
+    grade: string | null;
+    lead: string | null;
+    blurb: string | null;
+    spec: string[];
+    active: boolean;
+    featured: boolean;
+    sort_order: number;
+  };
 
-type ProductForm = {
-  id: string;
-  category_id: string;
-  name: string;
-  slug: string;
-  description: string;
-  summary: string;
-  price_per_unit: string;
-  unit: string;
-  stock: string;
-  moq: string;
-  origin: string;
-  grade: string;
-  lead: string;
-  blurb: string;
-  spec: string;
-  active: boolean;
-  featured: boolean;
-  sort_order: string;
-};
+  type ProductForm = {
+    id: string;
+    category_id: string;
+    name: string;
+    slug: string;
+    description: string;
+    summary: string;
+    price_per_unit: string;
+    unit: string;
+    stock: string;
+    moq: string;
+    origin: string;
+    grade: string;
+    lead: string;
+    blurb: string;
+    spec: string;
+    active: boolean;
+    featured: boolean;
+    sort_order: string;
+  };
 
-const emptyForm: ProductForm = {
-  id: "",
-  category_id: "",
-  name: "",
-  slug: "",
-  description: "",
-  summary: "",
-  price_per_unit: "",
-  unit: "",
-  stock: "0",
-  moq: "1",
-  origin: "",
-  grade: "",
-  lead: "",
-  blurb: "",
-  spec: "",
-  active: true,
-  featured: false,
-  sort_order: "0",
-};
+  const emptyForm: ProductForm = {
+    id: "",
+    category_id: "",
+    name: "",
+    slug: "",
+    description: "",
+    summary: "",
+    price_per_unit: "",
+    unit: "",
+    stock: "0",
+    moq: "1",
+    origin: "",
+    grade: "",
+    lead: "",
+    blurb: "",
+    spec: "",
+    active: true,
+    featured: false,
+    sort_order: "0",
+  };
 
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -83,6 +83,8 @@ const emptyForm: ProductForm = {
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
   const [form, setForm] = useState<ProductForm>(emptyForm);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -133,6 +135,9 @@ const emptyForm: ProductForm = {
       ...emptyForm,
       category_id: categories[0]?.id ?? "",
     });
+    setImageFile(null);
+    setImagePreview(null);
+
 
     setModalOpen(true);
   }
@@ -162,7 +167,8 @@ const emptyForm: ProductForm = {
       featured: product.featured,
       sort_order: String(product.sort_order ?? 0),
     });
-
+    setImageFile(null);
+    setImagePreview(product.image);
     setModalOpen(true);
   }
 
@@ -172,6 +178,9 @@ const emptyForm: ProductForm = {
     setModalOpen(false);
     setEditingProduct(null);
     setForm(emptyForm);
+    setImageFile(null);
+    setImagePreview(null);
+
   }
 
   function updateForm<K extends keyof ProductForm>(
@@ -209,42 +218,78 @@ const emptyForm: ProductForm = {
 
     setSaving(true);
 
-    const productData = {
-      id: form.id.trim(),
-      category_id: form.category_id,
-      name: form.name.trim(),
-
-      slug: form.slug.trim() || null,
-
-      description: form.description.trim() || null,
-      summary: form.summary.trim() || null,
-
-      price_per_unit: Number(form.price_per_unit) || 0,
-
-      unit: form.unit.trim(),
-
-      // Keep image NULL for now
-      image: null,
-
-      stock: Number(form.stock) || 0,
-      moq: Number(form.moq) || 1,
-
-      origin: form.origin.trim() || null,
-      grade: form.grade.trim() || null,
-      lead: form.lead.trim() || null,
-      blurb: form.blurb.trim() || null,
-
-      spec: form.spec
-        .split("\n")
-        .map((item) => item.trim())
-        .filter(Boolean),
-
-      active: form.active,
-      featured: form.featured,
-      sort_order: Number(form.sort_order) || 0,
-    };
+    let uploadedImagePath: string | null = null;
 
     try {
+      let imageUrl: string | null = editingProduct?.image ?? null;
+
+      /*
+       * Upload a new image only when the admin selected one.
+       */
+      if (imageFile) {
+        const fileExtension =
+          imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
+
+        const fileName = `${crypto.randomUUID()}.${fileExtension}`;
+        const filePath = `products/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("product-images")
+          .upload(filePath, imageFile, {
+            cacheControl: "3600",
+            upsert: false,
+            contentType: imageFile.type,
+          });
+
+        if (uploadError) {
+          throw new Error(
+            `Image upload failed: ${uploadError.message}`
+          );
+        }
+
+        uploadedImagePath = filePath;
+
+        const { data: publicUrlData } = supabase.storage
+          .from("product-images")
+          .getPublicUrl(filePath);
+
+        imageUrl = publicUrlData.publicUrl;
+      }
+
+      const productData = {
+        id: form.id.trim(),
+        category_id: form.category_id,
+        name: form.name.trim(),
+
+        slug: form.slug.trim() || null,
+
+        description: form.description.trim() || null,
+        summary: form.summary.trim() || null,
+
+        price_per_unit: Number(form.price_per_unit) || 0,
+
+        unit: form.unit.trim(),
+
+        image: imageUrl,
+
+        stock: Number(form.stock) || 0,
+        moq: Number(form.moq) || 1,
+
+        origin: form.origin.trim() || null,
+        grade: form.grade.trim() || null,
+        lead: form.lead.trim() || null,
+        blurb: form.blurb.trim() || null,
+
+        spec: form.spec
+          .split("\n")
+          .map((item) => item.trim())
+          .filter(Boolean),
+
+        active: form.active,
+        featured: form.featured,
+        sort_order: Number(form.sort_order) || 0,
+      };
+
       if (editingProduct) {
         const { data, error } = await supabase
           .from("products")
@@ -253,7 +298,9 @@ const emptyForm: ProductForm = {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         setProducts((current) =>
           current.map((product) =>
@@ -267,7 +314,9 @@ const emptyForm: ProductForm = {
           .select()
           .single();
 
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
 
         setProducts((current) => [...current, data]);
       }
@@ -275,6 +324,17 @@ const emptyForm: ProductForm = {
       closeModal();
     } catch (error: any) {
       console.error("Error saving product:", error);
+
+      /*
+       * If image uploaded successfully but product saving failed,
+       * remove the orphaned image from Storage.
+       */
+      if (uploadedImagePath) {
+        await supabase.storage
+          .from("product-images")
+          .remove([uploadedImagePath]);
+      }
+
       alert(error?.message ?? "Failed to save product.");
     } finally {
       setSaving(false);
@@ -493,11 +553,10 @@ const emptyForm: ProductForm = {
 
                       <td className="px-5 py-4">
                         <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
-                            product.active
-                              ? "bg-green-100 text-green-700"
-                              : "bg-slate-100 text-slate-500"
-                          }`}
+                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${product.active
+                            ? "bg-green-100 text-green-700"
+                            : "bg-slate-100 text-slate-500"
+                            }`}
                         >
                           {product.active ? "Active" : "Inactive"}
                         </span>
@@ -779,15 +838,53 @@ const emptyForm: ProductForm = {
               </section>
 
               {/* Image note */}
-              <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4">
-                <p className="text-sm font-medium text-slate-700">
+              <div className="rounded-lg border border-slate-300 bg-slate-50 p-4">
+                <label
+                  htmlFor="product-image"
+                  className="text-sm font-medium text-slate-700"
+                >
                   Product Image
+                </label>
+
+                <input
+                  id="product-image"
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0] ?? null;
+
+                    if (!file) {
+                      setImageFile(null);
+                      return;
+                    }
+
+                    // 5 MB limit
+                    if (file.size > 5 * 1024 * 1024) {
+                      alert("Image must be smaller than 5MB.");
+                      e.target.value = "";
+                      setImageFile(null);
+                      return;
+                    }
+
+                    setImageFile(file);
+                    setImagePreview(URL.createObjectURL(file));
+                  }}
+                  className="mt-2 block w-full cursor-pointer rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-green-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-green-700"
+                />
+
+                <p className="mt-2 text-xs text-slate-500">
+                  JPG, PNG, or WebP. Maximum 5MB.
                 </p>
 
-                <p className="mt-1 text-xs text-slate-500">
-                  Image upload is disabled for now. New products will
-                  have <code>image = null</code>.
-                </p>
+                {imagePreview && (
+                  <div className="mt-4">
+                    <img
+                      src={imagePreview}
+                      alt="Product preview"
+                      className="h-32 w-32 rounded-lg border border-slate-200 object-cover"
+                    />
+                  </div>
+                )}
               </div>
 
               {/* Footer */}

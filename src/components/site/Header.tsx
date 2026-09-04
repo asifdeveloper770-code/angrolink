@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import {
   Menu,
@@ -26,6 +26,7 @@ import {
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useQuoteCart } from "@/lib/quote-cart";
+import { supabase } from "@/lib/supabase";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -37,30 +38,18 @@ const NAV = [
 // const LANGS = ["English", "Kiswahili", "العربية"];
 
 
-const BUY_COMMODITIES = [
-  { label: "Onions", id: "onions" },
-  { label: "Tomatoes", id: "tomatoes" },
-  { label: "Spinach", id: "spinach" },
-  { label: "Kales", id: "sukuma-wiki" },
-  { label: "Okra", id: "okra" },
-  { label: "Wheat Flour", id: "wheat-flour" },
-  { label: "Rice", id: "rice" },
-  { label: "Cooking Oil", id: "cooking-oil" },
-  { label: "Maize", id: "maize" },
-  { label: "Beans", id: "beans" },
-  { label: "Green Peas", id: "green-peas" },
-  { label: "Cow Peas", id: "cowpeas" },
-  { label: "Eggs", id: "eggs" },
-] as const;
+type DropdownProduct = {
+  id: string;
+  name: string;
+  slug: string | null;
+  category_id: string;
+};
 
-const MACHINERY = [
-  { label: "Solar Panels", id: "solar-panels" },
-  { label: "Drip Irrigation Kits", id: "drip-irrigation" },
-  { label: "Hand Operator Pumps", id: "hand-pumps" },
-  { label: "Tractors", id: "tractors" },
-  { label: "Solar-Powered Backpack Sprayers", id: "solar-sprayers" },
-  { label: "Affordable Smartphones & Tablets", id: "smartphones-tablets" },
-] as const;
+type Category = {
+  id: string;
+  name: string;
+  slug: string;
+};
 
 const FARM_ITEMS = [
   {
@@ -83,8 +72,88 @@ const PARTNER_OPTIONS = [
 
 export function Header() {
   const [open, setOpen] = useState(false);
-  // const [lang, setLang] = useState(LANGS[0]);
+
+  const [commodities, setCommodities] = useState<DropdownProduct[]>([]);
+  const [machinery, setMachinery] = useState<DropdownProduct[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+
   const { count } = useQuoteCart();
+
+  useEffect(() => {
+    async function fetchDropdownProducts() {
+      try {
+        setLoadingProducts(true);
+
+        // 1. Fetch the two categories
+        const { data: categories, error: categoriesError } = await supabase
+          .from("categories")
+          .select("id, name, slug")
+          .eq("active", true)
+          .in("slug", ["commodities", "machinery"]);
+
+        if (categoriesError) {
+          console.error("Failed to fetch categories:", categoriesError);
+          return;
+        }
+
+        if (!categories || categories.length === 0) {
+          console.warn("No commodities or machinery categories found.");
+          return;
+        }
+
+        const commoditiesCategory = categories.find(
+          (category) => category.slug === "commodities"
+        );
+
+        const machineryCategory = categories.find(
+          (category) => category.slug === "machinery"
+        );
+
+        // 2. Fetch products belonging to these categories
+        const categoryIds = categories.map((category) => category.id);
+
+        const { data: products, error: productsError } = await supabase
+          .from("products")
+          .select("id, name, slug, category_id")
+          .eq("active", true)
+          .in("category_id", categoryIds)
+          .order("sort_order", { ascending: true })
+          .order("name", { ascending: true });
+
+        if (productsError) {
+          console.error("Failed to fetch products:", productsError);
+          return;
+        }
+
+        const allProducts = (products ?? []) as DropdownProduct[];
+
+        // 3. Separate products into the two dropdowns
+        setCommodities(
+          commoditiesCategory
+            ? allProducts.filter(
+              (product) =>
+                product.category_id === commoditiesCategory.id
+            )
+            : []
+        );
+
+        setMachinery(
+          machineryCategory
+            ? allProducts.filter(
+              (product) =>
+                product.category_id === machineryCategory.id
+            )
+            : []
+        );
+      } catch (error) {
+        console.error("Error loading navigation products:", error);
+      } finally {
+        setLoadingProducts(false);
+      }
+    }
+
+    fetchDropdownProducts();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/95 backdrop-blur-md transition-all">
@@ -167,21 +236,33 @@ export function Header() {
                     <DropdownMenuSeparator className="my-1" />
 
                     <div className="max-h-72 overflow-y-auto pr-1">
-                      {BUY_COMMODITIES.map((commodity) => (
-                        <DropdownMenuItem
-                          key={commodity.id}
-                          asChild
-                          className="rounded-md"
-                        >
-                          <Link
-                            to="/shop"
-                            search={{ item: commodity.id }}
-                            className="cursor-pointer py-1.5 text-xs font-medium"
-                          >
-                            {commodity.label}
-                          </Link>
+                      {loadingProducts ? (
+                        <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                          Loading commodities...
                         </DropdownMenuItem>
-                      ))}
+                      ) : commodities.length > 0 ? (
+                        commodities.map((commodity) => (
+                          <DropdownMenuItem
+                            key={commodity.id}
+                            asChild
+                            className="rounded-md"
+                          >
+                            <Link
+                              to="/shop"
+                              search={{
+                                item: commodity.slug ?? commodity.id,
+                              }}
+                              className="cursor-pointer py-1.5 text-xs font-medium"
+                            >
+                              {commodity.name}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))
+                      ) : (
+                        <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                          No commodities available
+                        </DropdownMenuItem>
+                      )}
                     </div>
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
@@ -200,21 +281,33 @@ export function Header() {
 
                     <DropdownMenuSeparator className="my-1" />
 
-                    {MACHINERY.map((item) => (
-                      <DropdownMenuItem
-                        key={item.id}
-                        asChild
-                        className="rounded-md"
-                      >
-                        <Link
-                          to="/shop"
-                          search={{ item: item.id }}
-                          className="cursor-pointer py-1.5 text-xs font-medium"
-                        >
-                          {item.label}
-                        </Link>
+                    {loadingProducts ? (
+                      <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                        Loading machinery...
                       </DropdownMenuItem>
-                    ))}
+                    ) : machinery.length > 0 ? (
+                      machinery.map((item) => (
+                        <DropdownMenuItem
+                          key={item.id}
+                          asChild
+                          className="rounded-md"
+                        >
+                          <Link
+                            to="/shop"
+                            search={{
+                              item: item.slug ?? item.id,
+                            }}
+                            className="cursor-pointer py-1.5 text-xs font-medium"
+                          >
+                            {item.name}
+                          </Link>
+                        </DropdownMenuItem>
+                      ))
+                    ) : (
+                      <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                        No machinery available
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuSubContent>
                 </DropdownMenuSub>
 
@@ -351,17 +444,29 @@ export function Header() {
                 </p>
 
                 <div className="mt-1 grid grid-cols-2 gap-1 px-1">
-                  {BUY_COMMODITIES.map((commodity) => (
-                    <Link
-                      key={commodity.id}
-                      to="/shop"
-                      search={{ item: commodity.id }}
-                      onClick={() => setOpen(false)}
-                      className="truncate rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
-                    >
-                      {commodity.label}
-                    </Link>
-                  ))}
+                  {loadingProducts ? (
+                    <p className="px-3 py-2 text-xs text-muted-foreground">
+                      Loading commodities...
+                    </p>
+                  ) : commodities.length > 0 ? (
+                    commodities.map((commodity) => (
+                      <Link
+                        key={commodity.id}
+                        to="/shop"
+                        search={{
+                          item: commodity.slug ?? commodity.id,
+                        }}
+                        onClick={() => setOpen(false)}
+                        className="truncate rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+                      >
+                        {commodity.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="px-3 py-2 text-xs text-muted-foreground">
+                      No commodities available
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -372,17 +477,29 @@ export function Header() {
                 </p>
 
                 <div className="mt-1 flex flex-col gap-0.5 px-1">
-                  {MACHINERY.map((item) => (
-                    <Link
-                      key={item.id}
-                      to="/shop"
-                      search={{ item: item.id }}
-                      onClick={() => setOpen(false)}
-                      className="rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+                  {loadingProducts ? (
+                    <p className="px-3 py-2 text-xs text-muted-foreground">
+                      Loading machinery...
+                    </p>
+                  ) : machinery.length > 0 ? (
+                    machinery.map((item) => (
+                      <Link
+                        key={item.id}
+                        to="/shop"
+                        search={{
+                          item: item.slug ?? item.id,
+                        }}
+                        onClick={() => setOpen(false)}
+                        className="rounded-md px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-primary"
+                      >
+                        {item.name}
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="px-3 py-2 text-xs text-muted-foreground">
+                      No machinery available
+                    </p>
+                  )}
                 </div>
               </div>
 

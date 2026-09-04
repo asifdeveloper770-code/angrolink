@@ -181,13 +181,24 @@ function Dashboard() {
     const formData = new FormData(e.currentTarget);
 
     const serviceData: ServiceEntry = {
-      title: String(formData.get("title") || "").trim(),
-      description: String(formData.get("description") || "").trim(),
-      category: String(formData.get("category") || "").trim(),
+      pillar_slug: String(formData.get("pillar_slug") || "").trim(),
+      pillar_title: String(formData.get("pillar_title") || "").trim(),
+      pillar_intro: String(formData.get("pillar_intro") || "").trim(),
+      service_name: String(formData.get("service_name") || "").trim(),
+      service_copy: String(formData.get("service_copy") || "").trim(),
+      sort_order: Number(formData.get("sort_order") || 0),
+      active: true,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
     };
 
-    if (!serviceData.title) {
-      toast.error("Service title is required");
+    if (!serviceData.pillar_title) {
+      toast.error("Pillar title is required");
+      return;
+    }
+
+    if (!serviceData.service_name) {
+      toast.error("Service name is required");
       return;
     }
 
@@ -230,6 +241,8 @@ function Dashboard() {
       title: String(formData.get("title") || "").trim(),
       content: String(formData.get("content") || "").trim(),
       category: String(formData.get("category") || "").trim(),
+      excerpt: String(formData.get("excerpt") || "").trim(),
+      read_time: String(formData.get("read_time") || "").trim(),
     };
 
     if (!articleData.title) {
@@ -421,9 +434,13 @@ function Dashboard() {
                       setEditing({
                         type: "service",
                         data: {
-                          title: "",
-                          description: "",
-                          category: "",
+                          pillar_slug: "",
+                          pillar_title: "",
+                          pillar_intro: "",
+                          service_name: "",
+                          service_copy: "",
+                          sort_order: 0,
+                          active: true,
                         },
                       })
                     }
@@ -459,15 +476,15 @@ function Dashboard() {
                         paginatedServices.map((service) => (
                           <TableRow key={service.id}>
                             <TableCell className="font-medium">
-                              {service.title}
+                              {service.service_name}
                             </TableCell>
 
                             <TableCell>
-                              {service.category || "—"}
+                              {service.pillar_title || "—"}
                             </TableCell>
 
                             <TableCell className="max-w-md truncate">
-                              {service.description || "—"}
+                              {service.service_copy || "—"}
                             </TableCell>
 
                             <TableCell>
@@ -545,6 +562,8 @@ function Dashboard() {
                           title: "",
                           content: "",
                           category: "",
+                          excerpt: "",
+                          read_time: "",
                         },
                       })
                     }
@@ -833,16 +852,16 @@ function AdminEditModal({
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-100 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) {
           onClose();
         }
       }}
     >
-      <div className="w-full max-w-2xl overflow-hidden rounded-xl bg-background shadow-2xl">
+      <div className="w-full max-w-2xl rounded-xl bg-background shadow-2xl overflow-auto max-h-[90vh]">
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b px-6 py-4">
+        <div className="flex items-center justify-between border-b px-6 py-4 ">
           <div>
             <h2 className="text-xl font-bold">
               {editing.id
@@ -881,44 +900,87 @@ function AdminEditModal({
             className="space-y-5 p-6"
           >
             <div className="space-y-2">
-              <Label htmlFor="service-title">
-                Title
+              <Label htmlFor="pillar-title">
+                Pillar Title
               </Label>
 
               <Input
-                id="service-title"
-                name="title"
-                defaultValue={data.title || ""}
-                placeholder="Enter service title"
+                id="pillar-title"
+                name="pillar_title"
+                defaultValue={data.pillar_title || ""}
+                placeholder="e.g. Agricultural Aggregation"
                 autoFocus
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service-category">
-                Category
+              <Label htmlFor="pillar-slug">
+                Pillar Slug
               </Label>
 
               <Input
-                id="service-category"
-                name="category"
-                defaultValue={data.category || ""}
-                placeholder="e.g. Agriculture, Logistics"
+                id="pillar-slug"
+                name="pillar_slug"
+                defaultValue={data.pillar_slug || ""}
+                placeholder="e.g. agricultural-aggregation"
+                required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service-description">
-                Description
+              <Label htmlFor="pillar-intro">
+                Pillar Introduction
               </Label>
 
               <Textarea
-                id="service-description"
-                name="description"
-                defaultValue={data.description || ""}
+                id="pillar-intro"
+                name="pillar_intro"
+                defaultValue={data.pillar_intro || ""}
+                placeholder="Describe this service pillar..."
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="service-name">
+                Service Name
+              </Label>
+
+              <Input
+                id="service-name"
+                name="service_name"
+                defaultValue={data.service_name || ""}
+                placeholder="e.g. Smallholder Crop Consolidation"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="service-copy">
+                Service Description
+              </Label>
+
+              <Textarea
+                id="service-copy"
+                name="service_copy"
+                defaultValue={data.service_copy || ""}
                 placeholder="Describe this service..."
-                rows={6}
+                rows={5}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="service-sort-order">
+                Sort Order
+              </Label>
+
+              <Input
+                id="service-sort-order"
+                name="sort_order"
+                type="number"
+                min="0"
+                defaultValue={data.sort_order ?? 0}
               />
             </div>
 
@@ -932,9 +994,7 @@ function AdminEditModal({
               </Button>
 
               <Button type="submit" variant="gold">
-                {editing.id
-                  ? "Update Service"
-                  : "Add Service"}
+                {editing.id ? "Update Service" : "Add Service"}
               </Button>
             </div>
           </form>
@@ -984,6 +1044,32 @@ function AdminEditModal({
                 placeholder="Write the knowledge article..."
                 rows={10}
                 required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="article-excerpt">
+                Excerpt
+              </Label>
+
+              <Textarea
+                id="article-excerpt"
+                name="excerpt"
+                defaultValue={data.excerpt || ""}
+                placeholder="Short description shown on the Knowledge Hub card..."
+                rows={3}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="article-read-time">
+                Read Time
+              </Label>
+
+              <Input
+                id="article-read-time"
+                name="read_time"
+                defaultValue={data.read_time || ""}
+                placeholder="e.g. 6 min"
               />
             </div>
 

@@ -183,7 +183,7 @@ function Shop() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-primary-foreground/80">
-              Indicative wholesale pricing in USD, ex-Kakuma yard.
+              Indicative wholesale pricing in KSH, ex-Kakuma yard.
               Add commodities to your quote cart — a contract
               specialist confirms final pricing, incoterms and
               delivery windows.
@@ -286,7 +286,7 @@ function Shop() {
         <div className="mt-5 flex items-end justify-between border-t border-border pt-4">
           <div>
             <p className="font-display text-2xl font-extrabold text-primary">
-              KSH{p.pricePerUnit.toLocaleString()}
+              KSH {p.pricePerUnit.toLocaleString()}
             </p>
 
             <p className="text-[11px] uppercase tracking-wider text-muted-foreground">

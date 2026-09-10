@@ -53,8 +53,14 @@ const OFFICES = [
     email: "operations@agrilinkkakuma.co.ke",
   },
   {
-    city: "Nairobi — Commercial Office",
-    lines: ["Westlands Commercial Hub, 4th Floor", "Nairobi, Kenya"],
+    city: "Juba office ",
+    lines: ["*****************","South Sudan"],
+    phone: "+254 733 908 640",
+    email: "commercial@agrilinkkakuma.co.ke",
+  },
+  {
+    city: "⁠New York, New York, United States.",
+    lines: ["******************", "New York, United States"],
     phone: "+254 733 908 640",
     email: "commercial@agrilinkkakuma.co.ke",
   },

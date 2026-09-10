@@ -11,10 +11,10 @@ import {
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { Header } from "@/components/site/Header";
+//import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
-import { QuoteCartProvider } from "@/lib/quote-cart";
-import { Toaster } from "@/components/ui/sonner";
+//import { QuoteCartProvider } from "@/lib/quote-cart";
+import { Toaster } from "@/components/ui/sonner";/
 
 function NotFoundComponent() {
   return (

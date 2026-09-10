@@ -84,7 +84,7 @@ export function Footer() {
             </li>
             <li className="flex gap-2">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              <span>Juba office (South Sudan), Kenya</span>
+              <span>Juba office ,South Sudan</span>
             </li>
             <li className="flex gap-2">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />

@@ -16,7 +16,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { Counter } from "@/components/site/Counter";
 import { DataPixels } from "@/components/site/DataPixels";
 import logoAsset from "@/assets/agrilink-logo.jpeg";
-//import heroField from "@/assets/hero-field.jpg";
+import heroField from "@/assets/hero-field.jpg";
 
 
 export const Route = createFileRoute("/")({

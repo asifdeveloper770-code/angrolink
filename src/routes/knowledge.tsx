@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/Reveal";
 import { DataPixels } from "@/components/site/DataPixels";
 import { cn } from "@/lib/utils";
-//import { getKnowledgeHub } from "@/lib/supabase";
+import { getKnowledgeHub } from "@/lib/supabase";
 
 export const Route = createFileRoute("/knowledge")({
   head: () => ({

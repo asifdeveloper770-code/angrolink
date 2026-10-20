@@ -25,7 +25,7 @@ export const Route = createFileRoute("/contact")({
       {
         name: "description",
         content:
-          "Reach the AgriLink EA Ltd. team: corporate contact form, business emails, operational phone lines and office locations in Kenya, South Sudan, and New York.",
+          "Reach the AgriLink EA Ltd. team: corporate contact form, business emails, operational phone lines and office locations in Kenya and South Sudan.",
       },
       { property: "og:title", content: "Contact AgriLink EA Ltd." },
       {
@@ -51,19 +51,13 @@ const OFFICES = [
     city: "Kakuma — Operations HQ",
     lines: ["Kakuma Town Trade Yard, Plot 118", "Turkana West Sub-County, Kenya"],
     phone: "+254 700 482 119",
-    email: "operations@agrilinkkakuma.co.ke",
+    email: "operations@agrilinkea.com",
   },
   {
-    city: "Juba office ",
-    lines: ["*****************", "South Sudan"],
+    city: "Juba — South Sudan Office",
+    lines: ["Juba, Central Equatoria State", "South Sudan"],
     phone: "+254 733 908 640",
-    email: "commercial@agrilinkkakuma.co.ke",
-  },
-  {
-    city: "⁠New York, New York, United States.",
-    lines: ["******************", "New York, United States"],
-    phone: "+254 733 908 640",
-    email: "commercial@agrilinkkakuma.co.ke",
+    email: "commercial@agrilinkea.com",
   },
 ];
 
@@ -117,7 +111,7 @@ function Contact() {
     <>
       <section className="relative isolate overflow-hidden surface-forest">
         <DataPixels tone="light" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <Reveal>
             <h1 className="font-display text-[clamp(2.1rem,5.5vw,3.8rem)] font-extrabold uppercase leading-[1]">
               Contact us
@@ -129,7 +123,7 @@ function Contact() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:px-8">
+      <section className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:px-8">
         <Reveal>
           <div className="rounded-2xl border border-border bg-card p-6 sm:p-9">
             {sent ? (
@@ -215,7 +209,7 @@ function Contact() {
           </div>
         </Reveal>
 
-        <div className="space-y-6">
+        <div className="space-y-4">
           {OFFICES.map((o, i) => (
             <Reveal key={o.city} delay={i * 100}>
               <div className="lift rounded-xl border border-border bg-card p-6">

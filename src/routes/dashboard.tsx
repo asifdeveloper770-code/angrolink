@@ -40,7 +40,7 @@ import { AlertCircle, Trash2, Edit2, X } from "lucide-react";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — AgriLink Kakuma LLC" },
+      { title: "Dashboard — AgriLink EA Ltd." },
       {
         name: "description",
         content: "Admin dashboard for managing services, knowledge hub, and orders.",

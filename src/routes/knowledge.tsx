@@ -11,13 +11,13 @@ import { getKnowledgeHub, type KnowledgeHubArticle } from "@/lib/supabase";
 export const Route = createFileRoute("/knowledge")({
   head: () => ({
     meta: [
-      { title: "Knowledge Hub — Crop Reports & Market Intelligence | AgriLink Kakuma" },
+      { title: "Knowledge Hub — Crop Reports & Market Intelligence | AgriLink EA Ltd." },
       {
         name: "description",
         content:
-          "Crop reports, weekly market pricing updates, sustainability whitepapers and community impact stories from Turkana County.",
+          "Crop reports, weekly market pricing updates, sustainability whitepapers and community impact stories from across East Africa.",
       },
-      { property: "og:title", content: "Knowledge Hub — AgriLink Kakuma" },
+      { property: "og:title", content: "Knowledge Hub — AgriLink EA Ltd." },
       {
         property: "og:description",
         content:
@@ -139,7 +139,7 @@ function Knowledge() {
       <section className="relative isolate overflow-hidden surface-forest">
         <DataPixels tone="light" />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <Reveal>
             <h1 className="max-w-4xl font-display text-[clamp(2.1rem,5.5vw,3.8rem)] font-extrabold uppercase leading-none">
               Knowledge hub

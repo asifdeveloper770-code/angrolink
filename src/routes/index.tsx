@@ -16,8 +16,10 @@ import { Reveal } from "@/components/site/Reveal";
 import { Counter } from "@/components/site/Counter";
 import { DataPixels } from "@/components/site/DataPixels";
 import logoAsset from "@/assets/agrilogo.png";
-import heroGreenFarm from "@/assets/images/hero_green_farm_1792527487427.jpg";
+import heroPhoto from "@/assets/images/agrilink_hero_cold_storage.jpg";
 import farmCommodities from "@/assets/images/farm_commodities_1792527487698.jpg";
+import southSudanFarm from "@/assets/images/south_sudan_farm.jpg";
+import ourWork from "@/assets/images/agrilink_our_work.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -76,7 +78,7 @@ const PILLARS = [
   {
     icon: Truck,
     title: "Logistics",
-    copy: "First and last-mile movement across arid terrain, cold-chain integrity and cross-border freight into regional demand centres.",
+    copy: "First and last-mile movement across East Africa's farming regions, cold-chain integrity and cross-border freight into regional demand centres.",
     points: ["First / last mile", "Cold-chain", "Cross-border freight"],
   },
   {
@@ -90,17 +92,28 @@ const PILLARS = [
 function Home() {
   return (
     <>
-      <section className="relative isolate overflow-hidden surface-forest">
+      <section className="relative isolate overflow-hidden surface-hero-green">
+        {/* Real farm photo behind a green wash for a greener, living background */}
+        <img
+          src={heroPhoto}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-30"
+        />
+        <div
+          className="pointer-events-none absolute inset-0 -z-10 bg-linear-to-r from-[oklch(0.3_0.09_152)] via-[oklch(0.36_0.11_150/0.88)] to-[oklch(0.45_0.13_145/0.55)]"
+          aria-hidden
+        />
         <div
           className="pointer-events-none absolute inset-0 grid-mesh text-primary-foreground/70"
           aria-hidden
         />
         <div
-          className="pointer-events-none absolute -right-40 -top-40 h-36rem w-36rem rounded-full bg-gold/20 blur-[120px]"
+          className="pointer-events-none absolute -right-40 -top-40 h-[36rem] w-[36rem] rounded-full bg-accent/25 blur-[120px]"
           aria-hidden
         />
         <DataPixels tone="light" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8 lg:py-32">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-12 lg:px-8 lg:py-20">
           <div className="min-w-0">
             <Reveal delay={90}>
               <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3.5 py-1 text-xs sm:text-sm font-bold text-gold backdrop-blur-sm">
@@ -165,22 +178,14 @@ function Home() {
               <div className="absolute -inset-8 rounded-[2rem] bg-gold/10 blur-3xl" aria-hidden />
               <figure className="frame-shadow relative overflow-hidden rounded-[1.75rem] border border-primary-foreground/20">
                 <img
-                  src={heroGreenFarm}
-                  alt="AgriLink EA Ltd - Lush green East African farming landscape with thriving crops and farmers"
-                  width={1600}
-                  height={1200}
-                  referrerPolicy="no-referrer"
+                  src={heroPhoto}
+                  alt="AgriLink EA Ltd solar-powered cold storage, delivery truck and team harvesting fresh produce on a green East African farm"
+                  width={1047}
+                  height={1008}
                   fetchPriority="high"
                   className="aspect-4/3 w-full object-cover sm:aspect-5/4"
-                  onError={(e) => {
-                    e.currentTarget.src = "/images/hero_green_farm.jpg";
-                  }}
                 />
-                <div
-                  className="absolute inset-0 bg-linear-to-r from-primary-deep/80 via-transparent to-transparent"
-                  aria-hidden
-                />
-                <figcaption className="absolute inset-x-0 bottom-0 flex items-center gap-3 p-5 sm:p-6 bg-gradient-to-t from-black/85 via-black/40 to-transparent">
+                <figcaption className="absolute inset-x-0 bottom-0 flex items-center gap-3 bg-linear-to-t from-black/90 via-black/70 to-transparent p-5 pt-12 sm:p-6 sm:pt-14">
                   <img
                     src={logoAsset}
                     alt="AgriLink EA Ltd. logo"
@@ -211,21 +216,21 @@ function Home() {
             Tell us who you are
           </h2>
         </Reveal>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
           {SEGMENTS.map((s, i) => (
             <Reveal key={s.title} delay={i * 90}>
               <Link
                 to={s.to}
-                className="lift group flex h-full flex-col rounded-2xl border border-border bg-card p-8 shadow-sm hover:border-accent"
+                className="lift group flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-sm hover:border-accent"
               >
                 <span className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-primary transition-colors group-hover:bg-gold group-hover:text-gold-foreground">
                   <s.icon className="h-6 w-6" />
                 </span>
-                <h3 className="mt-6 text-lg font-bold">{s.title}</h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+                <h3 className="mt-4 text-lg font-bold">{s.title}</h3>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
                   {s.copy}
                 </p>
-                <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+                <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary">
                   {s.cta}
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                 </span>
@@ -240,21 +245,21 @@ function Home() {
           <Reveal>
             <p className="eyebrow">Three business pillars</p>
             <h2 className="mt-4 max-w-3xl text-3xl font-extrabold uppercase sm:text-4xl">
-              One integrated operating system for arid-land trade
+              One integrated operating system for East African agricultural trade
             </h2>
           </Reveal>
 
-          <div className="mt-12 grid gap-6 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 lg:grid-cols-3">
             {PILLARS.map((p, i) => (
               <Reveal key={p.title} delay={i * 100}>
-                <article className="lift h-full rounded-2xl border border-border bg-card p-8">
-                  <span className="grid h-14 w-14 place-items-center rounded-2xl border-2 border-primary/20 text-primary">
-                    <p.icon className="h-7 w-7" strokeWidth={1.4} />
+                <article className="lift h-full rounded-2xl border border-border bg-card p-6">
+                  <span className="grid h-12 w-12 place-items-center rounded-2xl border-2 border-primary/20 text-primary">
+                    <p.icon className="h-6 w-6" strokeWidth={1.4} />
                   </span>
-                  <h3 className="mt-6 text-xl font-extrabold uppercase">{p.title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{p.copy}</p>
+                  <h3 className="mt-4 text-xl font-extrabold uppercase">{p.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{p.copy}</p>
 
-                  <ul className="mt-6 space-y-2 border-t border-border pt-5 text-sm">
+                  <ul className="mt-4 space-y-1.5 border-t border-border pt-4 text-sm">
                     {p.points.map((pt) => (
                       <li key={pt} className="flex items-center gap-2">
                         <span className="h-1.5 w-1.5 rounded-[1px] bg-gold" />
@@ -267,7 +272,7 @@ function Home() {
             ))}
           </div>
           <Reveal delay={220}>
-            <div className="mt-10">
+            <div className="mt-6">
               <Button asChild variant="forest" size="lg">
                 <Link to="/services">
                   Explore operational detail <ArrowRight />
@@ -293,7 +298,7 @@ function Home() {
             </p>
           </Reveal>
 
-          <div className="mt-12 grid items-center gap-10 lg:grid-cols-2">
+          <div className="mt-8 grid items-center gap-8 lg:grid-cols-2">
             <Reveal delay={100}>
               <div className="relative overflow-hidden rounded-2xl border border-border shadow-elevate">
                 <img
@@ -385,13 +390,50 @@ function Home() {
               </div>
             </Reveal>
           </div>
+
+          {/* Our farms & our work — beyond arid lands, across East Africa */}
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {[
+              {
+                src: southSudanFarm,
+                alt: "AgriLink EA Ltd farm in South Sudan with green crop fields, orchards, greenhouses, solar warehouse and delivery trucks",
+                tag: "Our farm · South Sudan",
+                text: "Green, irrigated fields, greenhouses and solar-powered storage — proof that we work across East Africa, not only in arid and semi-arid areas.",
+              },
+              {
+                src: ourWork,
+                alt: "AgriLink EA Ltd tractor ploughing a large field with green hills and a solar-powered warehouse in the background",
+                tag: "Our work in the field",
+                text: "Mechanised land preparation, input delivery and aggregation that turn farms into reliable, market-ready supply.",
+              },
+            ].map((item, i) => (
+              <Reveal key={item.tag} delay={i * 100}>
+                <figure className="group relative overflow-hidden rounded-2xl border border-border shadow-elevate">
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    width={1047}
+                    height={1008}
+                    loading="lazy"
+                    className="aspect-16/10 w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
+                  <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/85 via-black/45 to-transparent p-4 pt-12 sm:p-5 sm:pt-14">
+                    <p className="text-xs font-bold uppercase tracking-wider text-gold">
+                      {item.tag}
+                    </p>
+                    <p className="mt-1 text-sm text-white/90">{item.text}</p>
+                  </figcaption>
+                </figure>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* About AgriLink EA Ltd Section Spotlight */}
       <section className="bg-secondary/40 section-y">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] items-center">
+          <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-center">
             <Reveal>
               <p className="eyebrow">About AgriLink EA Ltd.</p>
               <h2 className="mt-4 text-3xl font-extrabold uppercase sm:text-4xl text-foreground">
@@ -423,11 +465,11 @@ function Home() {
             </Reveal>
 
             <Reveal delay={150}>
-              <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-sm">
                 <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
                   East Africa Footprint
                 </h3>
-                <div className="mt-6 space-y-6">
+                <div className="mt-5 space-y-5">
                   <div className="border-l-2 border-primary pl-4">
                     <p className="text-2xl font-extrabold text-primary">30%</p>
                     <p className="text-sm font-semibold text-foreground">
@@ -471,14 +513,14 @@ function Home() {
               Network at a glance
             </h2>
           </Reveal>
-          <div className="mt-12 grid gap-6 sm:grid-cols-3">
+          <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {[
               { to: 18420, suffix: " MT", label: "Total metric tons aggregated" },
               { to: 6740, suffix: "+", label: "Active farmers in network" },
               { to: 128, suffix: "", label: "Logistics routes secured" },
             ].map((m, i) => (
               <Reveal key={m.label} delay={i * 110}>
-                <div className="lift rounded-2xl border border-border bg-card p-8 text-center">
+                <div className="lift rounded-2xl border border-border bg-card p-6 text-center">
                   <p className="font-display text-4xl font-extrabold text-primary sm:text-5xl">
                     <Counter to={m.to} suffix={m.suffix} />
                   </p>
@@ -492,19 +534,19 @@ function Home() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 section-y sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pb-[var(--space-section)] sm:px-6 lg:px-8">
         <Reveal>
           <p className="eyebrow">Investment & Partnership</p>
           <h2 className="mt-4 max-w-3xl text-3xl font-extrabold uppercase sm:text-4xl">
             Four critical infrastructure pillars
           </h2>
-          <p className="mt-6 max-w-2xl text-primary-foreground/60">
+          <p className="mt-4 max-w-2xl text-muted-foreground">
             We invite visionary investors, impact funds, and development partners to join us in
             scaling our operations across these high-yield infrastructure tracks.
           </p>
         </Reveal>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-2">
+        <div className="mt-8 grid gap-4 lg:grid-cols-2">
           {[
             {
               title: "Cold Chain Expansion",
@@ -524,45 +566,40 @@ function Home() {
             },
           ].map((pillar, i) => (
             <Reveal key={pillar.title} delay={i * 100}>
-              <article className="lift h-full rounded-2xl border border-border bg-card p-8">
+              <article className="lift h-full rounded-2xl border border-border bg-card p-6">
                 <h3 className="text-xl font-extrabold uppercase text-primary">{pillar.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{pillar.copy}</p>
+                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{pillar.copy}</p>
               </article>
             </Reveal>
           ))}
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 section-y sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 pb-[var(--space-section)] sm:px-6 lg:px-8">
         <Reveal>
           <p className="eyebrow">Our presence</p>
           <h2 className="mt-4 max-w-2xl text-3xl font-extrabold uppercase sm:text-4xl">Offices</h2>
         </Reveal>
 
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
           {[
             {
-              name: "Nairobi & Turkana",
+              name: "Nairobi & Kakuma",
               country: "Kenya",
               region: "Headquarters & Aggregation Trade Yards",
             },
             {
               name: "Juba",
               country: "South Sudan",
-              region: "Regional Operations & Corridor Desk",
-            },
-            {
-              name: "New York",
-              country: "United States",
-              region: "Global Partnerships & Investment",
+              region: "Regional Operations, Corridor Desk & Partnerships",
             },
           ].map((office, i) => (
             <Reveal key={office.name} delay={i * 90}>
-              <div className="lift rounded-2xl border border-border bg-card p-8 text-center">
+              <div className="lift rounded-2xl border border-border bg-card p-6 text-center">
                 <div className="grid h-12 w-12 place-items-center rounded-xl bg-secondary text-primary mx-auto">
                   <Building2 className="h-6 w-6" />
                 </div>
-                <h3 className="mt-6 text-lg font-bold">{office.name}</h3>
+                <h3 className="mt-4 text-lg font-bold">{office.name}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{office.country}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{office.region}</p>
               </div>

@@ -152,7 +152,7 @@ function Partner() {
     <>
       <section className="relative isolate overflow-hidden surface-forest">
         <DataPixels tone="light" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <Reveal>
             <h1 className="max-w-4xl font-display text-[clamp(2.1rem,5.5vw,3.8rem)] font-extrabold uppercase leading-[1]">
               Partner with us

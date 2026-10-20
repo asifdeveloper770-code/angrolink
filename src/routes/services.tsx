@@ -5,6 +5,7 @@ import { Users, Truck, LineChart, ArrowRight, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/Reveal";
 import { DataPixels } from "@/components/site/DataPixels";
+import { EA_COUNTRY_PATHS, EA_MAP_VIEWBOX, type EACountryId } from "@/lib/east-africa-map";
 
 export const Route = createFileRoute("/services")({
   head: () => ({
@@ -32,26 +33,206 @@ const PILLAR_ICONS = {
   "market-intelligence": LineChart,
 } as const;
 
-const CORRIDORS = [
-  { id: "kakuma", name: "Kakuma Hub", x: 30, y: 42, type: "hub" },
-  { id: "lodwar", name: "Lodwar", x: 52, y: 58, type: "hub" },
-  { id: "kalobeyei", name: "Kalobeyei", x: 24, y: 28, type: "node" },
-  { id: "lokichar", name: "Lokichar", x: 60, y: 78, type: "node" },
-  { id: "kaikor", name: "Kaikor", x: 44, y: 14, type: "node" },
-  { id: "lokichoggio", name: "Lokichoggio", x: 12, y: 18, type: "node" },
-  { id: "kitale", name: "Kitale Corridor", x: 82, y: 90, type: "exit" },
-  { id: "juba", name: "Juba Corridor", x: 8, y: 6, type: "exit" },
+type CorridorNode = {
+  id: string;
+  name: string;
+  country: "Kenya" | "South Sudan" | "Uganda";
+  x: number;
+  y: number;
+  type: "hub" | "node" | "exit";
+  /** label position + anchor so names never collide on the map */
+  lx: number;
+  ly: number;
+  anchor: "start" | "middle" | "end";
+};
+
+// Coordinates are projected onto the same 100 x 92 East Africa map as EA_COUNTRY_PATHS.
+const CORRIDORS: CorridorNode[] = [
+  {
+    id: "juba",
+    name: "Juba Hub",
+    country: "South Sudan",
+    x: 32.8,
+    y: 33.8,
+    type: "hub",
+    lx: 29.6,
+    ly: 33.4,
+    anchor: "end",
+  },
+  {
+    id: "kakuma",
+    name: "Kakuma Hub",
+    country: "Kenya",
+    x: 52.1,
+    y: 40.4,
+    type: "hub",
+    lx: 55,
+    ly: 41.4,
+    anchor: "start",
+  },
+  {
+    id: "nairobi",
+    name: "Nairobi Hub",
+    country: "Kenya",
+    x: 63.6,
+    y: 69.9,
+    type: "hub",
+    lx: 66.8,
+    ly: 70.7,
+    anchor: "start",
+  },
+  {
+    id: "wau",
+    name: "Wau",
+    country: "South Sudan",
+    x: 11.8,
+    y: 16.9,
+    type: "node",
+    lx: 14.2,
+    ly: 17.7,
+    anchor: "start",
+  },
+  {
+    id: "bor",
+    name: "Bor",
+    country: "South Sudan",
+    x: 32.7,
+    y: 25.7,
+    type: "node",
+    lx: 35,
+    ly: 26.5,
+    anchor: "start",
+  },
+  {
+    id: "yei",
+    name: "Yei",
+    country: "South Sudan",
+    x: 27.5,
+    y: 38.3,
+    type: "node",
+    lx: 25.2,
+    ly: 39.1,
+    anchor: "end",
+  },
+  {
+    id: "nimule",
+    name: "Nimule",
+    country: "South Sudan",
+    x: 35.6,
+    y: 41.1,
+    type: "node",
+    lx: 33.3,
+    ly: 41.9,
+    anchor: "end",
+  },
+  {
+    id: "kapoeta",
+    name: "Kapoeta",
+    country: "South Sudan",
+    x: 44.6,
+    y: 34.2,
+    type: "node",
+    lx: 44.6,
+    ly: 31.4,
+    anchor: "middle",
+  },
+  {
+    id: "lokichoggio",
+    name: "Lokichoggio",
+    country: "Kenya",
+    x: 49.1,
+    y: 37.6,
+    type: "node",
+    lx: 51.4,
+    ly: 37.2,
+    anchor: "start",
+  },
+  {
+    id: "lodwar",
+    name: "Lodwar",
+    country: "Kenya",
+    x: 56.5,
+    y: 44,
+    type: "node",
+    lx: 58.8,
+    ly: 44.8,
+    anchor: "start",
+  },
+  {
+    id: "kitale",
+    name: "Kitale",
+    country: "Kenya",
+    x: 52.9,
+    y: 56.3,
+    type: "node",
+    lx: 50.6,
+    ly: 57.1,
+    anchor: "end",
+  },
+  {
+    id: "eldoret",
+    name: "Eldoret",
+    country: "Kenya",
+    x: 54.5,
+    y: 59.3,
+    type: "node",
+    lx: 56.8,
+    ly: 60.1,
+    anchor: "start",
+  },
+  {
+    id: "kampala",
+    name: "Kampala Corridor",
+    country: "Uganda",
+    x: 38.7,
+    y: 60.3,
+    type: "exit",
+    lx: 38.7,
+    ly: 64.8,
+    anchor: "middle",
+  },
+  {
+    id: "mombasa",
+    name: "Mombasa Port",
+    country: "Kenya",
+    x: 80.4,
+    y: 86.1,
+    type: "exit",
+    lx: 77.8,
+    ly: 86.9,
+    anchor: "end",
+  },
 ];
 
 const LINKS: [string, string][] = [
-  ["kakuma", "kalobeyei"],
-  ["kakuma", "lodwar"],
+  ["mombasa", "nairobi"],
+  ["nairobi", "eldoret"],
+  ["eldoret", "kitale"],
+  ["kitale", "lodwar"],
+  ["lodwar", "kakuma"],
   ["kakuma", "lokichoggio"],
-  ["lokichoggio", "juba"],
-  ["kalobeyei", "kaikor"],
-  ["lodwar", "lokichar"],
-  ["lokichar", "kitale"],
+  ["lokichoggio", "kapoeta"],
+  ["kapoeta", "juba"],
+  ["juba", "nimule"],
+  ["nimule", "kampala"],
+  ["kampala", "eldoret"],
+  ["juba", "yei"],
+  ["juba", "bor"],
+  ["juba", "wau"],
 ];
+
+const COUNTRY_LABELS: { name: string; x: number; y: number; active?: boolean }[] = [
+  { name: "SOUTH SUDAN", x: 17, y: 29, active: true },
+  { name: "KENYA", x: 76, y: 55, active: true },
+  { name: "UGANDA", x: 31, y: 52 },
+  { name: "ETHIOPIA", x: 74, y: 20 },
+  { name: "SUDAN", x: 24, y: 4 },
+  { name: "TANZANIA", x: 50, y: 86 },
+  { name: "DR CONGO", x: 9, y: 60 },
+  { name: "SOMALIA", x: 94, y: 70 },
+];
+
+const ACTIVE_COUNTRIES = new Set<EACountryId>(["kenya", "south-sudan"]);
 
 function point(id: string) {
   const n = CORRIDORS.find((c) => c.id === id)!;
@@ -208,7 +389,7 @@ function Services() {
     <>
       <section className="relative isolate overflow-hidden surface-forest">
         <DataPixels tone="light" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <Reveal>
             <h1 className="max-w-4xl font-display text-[clamp(2.1rem,5.5vw,3.8rem)] font-extrabold uppercase leading-[1]">
               Operational pillars
@@ -221,7 +402,7 @@ function Services() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl space-y-16 px-4 py-20 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl space-y-10 px-4 py-14 sm:px-6 lg:px-8">
         {loadingServices ? (
           <div className="py-12 text-center text-muted-foreground">Loading services...</div>
         ) : pillars.length === 0 ? (
@@ -250,7 +431,7 @@ function Services() {
 
                 <p className="mt-4 max-w-2xl text-muted-foreground">{pillar.intro}</p>
 
-                <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+                <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {pillar.services.map((service, i) => (
                     <Reveal key={service.name} delay={i * 70}>
                       <article className="lift group h-full rounded-xl border border-border bg-card p-6 hover:border-accent">
@@ -269,24 +450,25 @@ function Services() {
         )}
       </section>
 
-      <section className="bg-secondary/50 py-20">
+      <section className="bg-secondary/50 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">Coverage</p>
-            <h2 className="mt-3 text-3xl font-extrabold uppercase">Turkana trade corridors</h2>
+            <h2 className="mt-3 text-3xl font-extrabold uppercase">East African trade corridors</h2>
             <p className="mt-3 max-w-2xl text-muted-foreground">
-              Aggregation hubs, feeder nodes and export corridors currently under active operation.
+              Aggregation hubs, feeder nodes and export corridors across Kenya and South Sudan,
+              linked to Uganda and the port of Mombasa.
             </p>
           </Reveal>
 
-          <div className="mt-10 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
+          <div className="mt-8 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
             <Reveal>
-              <div className="overflow-hidden rounded-xl border border-border bg-card p-4">
+              <div className="overflow-hidden rounded-xl border border-border bg-card p-3 sm:p-4">
                 <svg
-                  viewBox="0 0 100 100"
+                  viewBox={EA_MAP_VIEWBOX}
                   className="h-auto w-full"
                   role="img"
-                  aria-label="Map of Turkana County trade corridors"
+                  aria-label="Map of East Africa showing AgriLink EA Ltd trade corridors across Kenya and South Sudan"
                 >
                   <defs>
                     <pattern id="grid" width="5" height="5" patternUnits="userSpaceOnUse">
@@ -294,17 +476,53 @@ function Services() {
                         d="M5 0 L0 0 0 5"
                         fill="none"
                         stroke="var(--color-border)"
-                        strokeWidth="0.2"
+                        strokeWidth="0.15"
                       />
                     </pattern>
                   </defs>
-                  <rect width="100" height="100" fill="url(#grid)" />
-                  <path
-                    d="M18 8 L62 6 L78 34 L70 74 L46 94 L20 78 L10 46 Z"
-                    fill="color-mix(in oklab, var(--color-accent) 12%, transparent)"
-                    stroke="var(--color-accent)"
-                    strokeWidth="0.5"
+                  {/* sea / background */}
+                  <rect
+                    width="100"
+                    height="92"
+                    fill="color-mix(in oklab, var(--color-chart-4) 10%, var(--color-card))"
                   />
+                  <rect width="100" height="92" fill="url(#grid)" />
+
+                  {(Object.keys(EA_COUNTRY_PATHS) as EACountryId[]).map((id) => {
+                    const active = ACTIVE_COUNTRIES.has(id);
+                    return (
+                      <path
+                        key={id}
+                        d={EA_COUNTRY_PATHS[id]}
+                        fill={
+                          active
+                            ? "color-mix(in oklab, var(--color-accent) 32%, var(--color-card))"
+                            : "color-mix(in oklab, var(--color-muted-foreground) 10%, var(--color-card))"
+                        }
+                        stroke={active ? "var(--color-primary)" : "var(--color-muted-foreground)"}
+                        strokeOpacity={active ? 0.9 : 0.45}
+                        strokeWidth={active ? 0.35 : 0.2}
+                        strokeLinejoin="round"
+                      />
+                    );
+                  })}
+
+                  {COUNTRY_LABELS.map((c) => (
+                    <text
+                      key={c.name}
+                      x={c.x}
+                      y={c.y}
+                      textAnchor="middle"
+                      fontSize={c.active ? 2.5 : 2}
+                      fontWeight={c.active ? 800 : 600}
+                      letterSpacing="0.35"
+                      fill={c.active ? "var(--color-primary)" : "var(--color-muted-foreground)"}
+                      opacity={c.active ? 0.9 : 0.75}
+                    >
+                      {c.name}
+                    </text>
+                  ))}
+
                   {LINKS.map(([a, b]) => {
                     const p1 = point(a);
                     const p2 = point(b);
@@ -316,54 +534,88 @@ function Services() {
                         x2={p2.x}
                         y2={p2.y}
                         stroke="var(--color-gold)"
-                        strokeWidth="0.6"
-                        strokeDasharray="2 1.5"
+                        strokeWidth="0.55"
+                        strokeDasharray="1.6 1.1"
+                        strokeLinecap="round"
                       />
                     );
                   })}
+
                   {CORRIDORS.map((c) => (
-                    <g key={c.id} className="cursor-pointer">
+                    <g key={c.id}>
+                      {c.type === "hub" && (
+                        <circle
+                          cx={c.x}
+                          cy={c.y}
+                          r={3.6}
+                          fill="var(--color-primary)"
+                          opacity={0.18}
+                        />
+                      )}
                       <circle
                         cx={c.x}
                         cy={c.y}
-                        r={c.type === "hub" ? 2.6 : 1.7}
+                        r={c.type === "hub" ? 2 : 1.25}
                         fill={c.type === "exit" ? "var(--color-gold)" : "var(--color-primary)"}
+                        stroke="var(--color-card)"
+                        strokeWidth="0.4"
                       />
                       <text
-                        x={c.x + 3.4}
-                        y={c.y + 1.1}
-                        fontSize="2.6"
+                        x={c.lx}
+                        y={c.ly}
+                        textAnchor={c.anchor}
+                        fontSize={c.type === "hub" ? 2.4 : 2.1}
+                        fontWeight={c.type === "hub" ? 700 : 500}
                         fill="var(--color-foreground)"
-                        className="font-medium"
+                        stroke="var(--color-card)"
+                        strokeWidth="0.5"
+                        paintOrder="stroke"
                       >
                         {c.name}
                       </text>
                     </g>
                   ))}
                 </svg>
+                <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 px-1 text-xs text-muted-foreground">
+                  <span className="flex items-center gap-2">
+                    <span className="h-3 w-5 rounded-sm border border-primary bg-accent/35" />
+                    Operating countries
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-primary" /> Hub / node
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-full bg-gold" /> Export corridor
+                  </span>
+                </div>
               </div>
             </Reveal>
 
             <Reveal delay={120}>
-              <ul className="space-y-3">
+              <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                 {CORRIDORS.map((c) => (
                   <li
                     key={c.id}
-                    className="lift flex items-center gap-3 rounded-lg border border-border bg-card px-4 py-3"
+                    className="lift flex items-center gap-3 rounded-lg border border-border bg-card px-3 py-2.5"
                   >
                     <MapPin
                       className={
                         "h-4 w-4 shrink-0 " + (c.type === "exit" ? "text-gold" : "text-primary")
                       }
                     />
-                    <span className="min-w-0 flex-1 truncate text-sm font-medium">{c.name}</span>
-                    <span className="shrink-0 rounded-full bg-secondary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-sm font-medium">{c.name}</span>
+                      <span className="block truncate text-[11px] text-muted-foreground">
+                        {c.country}
+                      </span>
+                    </span>
+                    <span className="shrink-0 rounded-full bg-secondary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
                       {c.type === "hub" ? "Hub" : c.type === "exit" ? "Export" : "Node"}
                     </span>
                   </li>
                 ))}
               </ul>
-              <Button asChild variant="gold" className="mt-6 w-full">
+              <Button asChild variant="gold" className="mt-5 w-full">
                 <Link to="/partner">
                   Discuss corridor access <ArrowRight />
                 </Link>

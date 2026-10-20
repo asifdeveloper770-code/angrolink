@@ -15,16 +15,16 @@ export const Route = createFileRoute("/shop/")({
   head: () => ({
     meta: [
       {
-        title: "B2B Commodity Catalog — AgriLink Kakuma LLC",
+        title: "B2B Commodity Catalog — AgriLink EA Ltd.",
       },
       {
         name: "description",
         content:
-          "Browse wholesale agricultural commodities from Turkana County: cereals, pulses, fresh produce, livestock, oilseeds and specialty goods.",
+          "Browse wholesale agricultural commodities from across Kenya and South Sudan: cereals, pulses, fresh produce, livestock, oilseeds and specialty goods.",
       },
       {
         property: "og:title",
-        content: "B2B Commodity Catalog — AgriLink Kakuma",
+        content: "B2B Commodity Catalog — AgriLink EA Ltd.",
       },
       {
         property: "og:description",
@@ -214,7 +214,7 @@ function Shop() {
       <section className="relative isolate overflow-hidden surface-forest">
         <DataPixels tone="light" />
 
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <Reveal>
             <h1 className="font-display text-[clamp(2.1rem,5.5vw,3.8rem)] font-extrabold uppercase leading-[1]">
               B2B commodity catalog

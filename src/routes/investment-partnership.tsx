@@ -41,7 +41,7 @@ function InvestmentPartnershipPage() {
     <main className="min-h-screen bg-background">
       {/* Hero */}
       <section className="border-b border-border/60 bg-secondary/30">
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <div className="max-w-3xl">
             <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
               <Handshake className="h-4 w-4 text-accent" />
@@ -61,15 +61,15 @@ function InvestmentPartnershipPage() {
       </section>
 
       {/* Investment Pillars */}
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
-        <div className="grid gap-6 md:grid-cols-2">
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <div className="grid gap-4 md:grid-cols-2">
           {pillars.map((pillar) => {
             const Icon = pillar.icon;
 
             return (
               <article
                 key={pillar.number}
-                className="group rounded-2xl border border-border/70 bg-background p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md sm:p-8"
+                className="group rounded-2xl border border-border/70 bg-background p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-accent">
@@ -81,7 +81,7 @@ function InvestmentPartnershipPage() {
                   </span>
                 </div>
 
-                <h2 className="mt-6 text-xl font-bold text-foreground sm:text-2xl">
+                <h2 className="mt-4 text-xl font-bold text-foreground sm:text-2xl">
                   {pillar.title}
                 </h2>
 

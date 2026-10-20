@@ -3,6 +3,7 @@ import { Download, FileText, Leaf, Globe2, HeartHandshake, ArrowRight } from "lu
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/Reveal";
 import { DataPixels } from "@/components/site/DataPixels";
+import ourWork from "@/assets/images/agrilink_our_work.jpg";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -29,7 +30,7 @@ const TEAM = [
     name: "Dr. Akiru Lomorukai",
     role: "Chief Executive Officer",
     creds: "PhD Agricultural Economics, University of Nairobi · Former ASAL policy advisor",
-    bio: "Led drought-response market systems programming across three counties before founding AgriLink Kakuma.",
+    bio: "Led drought-response market systems programming across three counties before founding AgriLink EA Ltd.",
   },
   {
     name: "Hassan Mwikali",
@@ -65,7 +66,7 @@ const TEAM = [
 
 const REPORTS = [
   { title: "Annual Impact Report 2025", meta: "PDF · 4.2 MB · 68 pages" },
-  { title: "Turkana Cold-Chain Feasibility Whitepaper", meta: "PDF · 2.1 MB · 34 pages" },
+  { title: "East Africa Cold-Chain Feasibility Whitepaper", meta: "PDF · 2.1 MB · 34 pages" },
   { title: "Climate Fragility & Market Access Index", meta: "PDF · 1.6 MB · 22 pages" },
   { title: "Smallholder Aggregation Playbook", meta: "PDF · 3.0 MB · 47 pages" },
 ];
@@ -75,7 +76,7 @@ function About() {
     <>
       <section className="relative isolate overflow-hidden surface-forest">
         <DataPixels tone="light" />
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
           <Reveal>
             <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3.5 py-1 text-xs sm:text-sm font-bold text-gold backdrop-blur-sm mb-4">
               <span>Empowering East African Agriculture 🌍✨</span>
@@ -97,8 +98,8 @@ function About() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="grid gap-8 lg:grid-cols-[1.3fr_1fr]">
           <Reveal>
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">
               Our Journey & Purpose
@@ -146,7 +147,21 @@ function About() {
           </Reveal>
 
           <Reveal delay={120}>
-            <div className="space-y-5">
+            <div className="space-y-4">
+              <figure className="overflow-hidden rounded-xl border border-border bg-card">
+                <img
+                  src={ourWork}
+                  alt="AgriLink EA Ltd tractor preparing a large field, with green hills and a solar-powered warehouse behind"
+                  width={1047}
+                  height={1008}
+                  loading="lazy"
+                  className="aspect-16/10 w-full object-cover"
+                />
+                <figcaption className="px-4 py-3 text-xs text-muted-foreground">
+                  <span className="font-bold uppercase tracking-wider text-accent">Our work</span> ·
+                  Mechanised land preparation and input delivery for partner farms.
+                </figcaption>
+              </figure>
               {[
                 {
                   icon: Leaf,
@@ -164,9 +179,9 @@ function About() {
                   copy: "Producer groups deliberately blend host-community and refugee-settlement participation to reduce economic friction.",
                 },
               ].map((v) => (
-                <div key={v.title} className="lift rounded-xl border border-border bg-card p-6">
+                <div key={v.title} className="lift rounded-xl border border-border bg-card p-5">
                   <v.icon className="h-6 w-6 text-accent" strokeWidth={1.5} />
-                  <h3 className="mt-4 font-bold">{v.title}</h3>
+                  <h3 className="mt-3 font-bold">{v.title}</h3>
                   <p className="mt-2 text-sm text-muted-foreground">{v.copy}</p>
                 </div>
               ))}
@@ -175,7 +190,7 @@ function About() {
         </div>
       </section>
 
-      <section className="bg-secondary/50 py-20">
+      <section className="bg-secondary/50 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">
@@ -183,7 +198,7 @@ function About() {
             </p>
             <h2 className="mt-3 text-3xl font-extrabold uppercase">Credentialed, county-rooted</h2>
           </Reveal>
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {TEAM.map((m, i) => (
               <Reveal key={m.name} delay={i * 70}>
                 <article className="lift h-full rounded-xl border border-border bg-card p-6">
@@ -212,7 +227,7 @@ function About() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <Reveal>
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">Resources</p>
           <h2 className="mt-3 text-3xl font-extrabold uppercase">Reports & whitepapers</h2>
@@ -221,7 +236,7 @@ function About() {
             annexes from our contact desk.
           </p>
         </Reveal>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2">
+        <div className="mt-8 grid gap-4 sm:grid-cols-2">
           {REPORTS.map((r, i) => (
             <Reveal key={r.title} delay={i * 80}>
               <div className="lift flex items-center justify-between gap-4 rounded-xl border border-border bg-card p-6">
@@ -242,7 +257,7 @@ function About() {
           ))}
         </div>
         <Reveal delay={200}>
-          <div className="mt-10">
+          <div className="mt-8">
             <Button asChild variant="gold" size="lg">
               <Link to="/partner">
                 Become a partner <ArrowRight />

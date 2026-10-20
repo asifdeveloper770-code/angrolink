@@ -121,7 +121,7 @@ export const Route = createFileRoute("/shop/$productId")({
       return {
         meta: [
           {
-            title: "Commodity unavailable — AgriLink Kakuma",
+            title: "Commodity unavailable — AgriLink EA Ltd.",
           },
           {
             name: "robots",
@@ -136,7 +136,7 @@ export const Route = createFileRoute("/shop/$productId")({
     return {
       meta: [
         {
-          title: `${p.name} — Wholesale ${p.category} | AgriLink Kakuma`,
+          title: `${p.name} — Wholesale ${p.category} | AgriLink EA Ltd.`,
         },
         {
           name: "description",
@@ -144,7 +144,7 @@ export const Route = createFileRoute("/shop/$productId")({
         },
         {
           property: "og:title",
-          content: `${p.name} — AgriLink Kakuma B2B Catalog`,
+          content: `${p.name} — AgriLink EA Ltd. B2B Catalog`,
         },
         {
           property: "og:description",

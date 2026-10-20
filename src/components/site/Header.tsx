@@ -12,7 +12,7 @@ import {
   Check,
   Sprout,
 } from "lucide-react";
-import logoAsset from "@/assets/agrilink-logo.jpeg";
+import logoAsset from "@/assets/agrilogo.png";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useQuoteCart } from "@/lib/quote-cart";
 import { supabase } from "@/lib/supabase";
+import { PRODUCTS } from "@/lib/catalog";
 
 const NAV = [
   { to: "/", label: "Home" },
@@ -36,7 +37,6 @@ const NAV = [
 ] as const;
 
 // const LANGS = ["English", "Kiswahili", "العربية"];
-
 
 type DropdownProduct = {
   id: string;
@@ -81,8 +81,36 @@ export function Header() {
 
   useEffect(() => {
     async function fetchDropdownProducts() {
+      const defaultCommodities: DropdownProduct[] = PRODUCTS.filter(
+        (p) => p.category !== "Machinery",
+      ).map((p) => ({
+        id: p.id,
+        name: p.name,
+        slug: p.id,
+        category_id: "commodities",
+      }));
+
+      const defaultMachinery: DropdownProduct[] = PRODUCTS.filter(
+        (p) => p.category === "Machinery",
+      ).map((p) => ({
+        id: p.id,
+        name: p.name,
+        slug: p.id,
+        category_id: "machinery",
+      }));
+
       try {
         setLoadingProducts(true);
+
+        const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"];
+        const isConfigured = Boolean(supabaseUrl) && !supabaseUrl.includes("placeholder-project");
+
+        if (!isConfigured) {
+          setCommodities(defaultCommodities);
+          setMachinery(defaultMachinery);
+          setLoadingProducts(false);
+          return;
+        }
 
         // 1. Fetch the two categories
         const { data: categories, error: categoriesError } = await supabase
@@ -91,23 +119,14 @@ export function Header() {
           .eq("active", true)
           .in("slug", ["commodities", "machinery"]);
 
-        if (categoriesError) {
-          console.error("Failed to fetch categories:", categoriesError);
+        if (categoriesError || !categories || categories.length === 0) {
+          setCommodities(defaultCommodities);
+          setMachinery(defaultMachinery);
           return;
         }
 
-        if (!categories || categories.length === 0) {
-          console.warn("No commodities or machinery categories found.");
-          return;
-        }
-
-        const commoditiesCategory = categories.find(
-          (category) => category.slug === "commodities"
-        );
-
-        const machineryCategory = categories.find(
-          (category) => category.slug === "machinery"
-        );
+        const commoditiesCategory = categories.find((category) => category.slug === "commodities");
+        const machineryCategory = categories.find((category) => category.slug === "machinery");
 
         // 2. Fetch products belonging to these categories
         const categoryIds = categories.map((category) => category.id);
@@ -120,33 +139,27 @@ export function Header() {
           .order("sort_order", { ascending: true })
           .order("name", { ascending: true });
 
-        if (productsError) {
-          console.error("Failed to fetch products:", productsError);
+        if (productsError || !products || products.length === 0) {
+          setCommodities(defaultCommodities);
+          setMachinery(defaultMachinery);
           return;
         }
 
-        const allProducts = (products ?? []) as DropdownProduct[];
+        const allProducts = products as DropdownProduct[];
 
-        // 3. Separate products into the two dropdowns
-        setCommodities(
-          commoditiesCategory
-            ? allProducts.filter(
-              (product) =>
-                product.category_id === commoditiesCategory.id
-            )
-            : []
-        );
+        const fetchedCommodities = commoditiesCategory
+          ? allProducts.filter((product) => product.category_id === commoditiesCategory.id)
+          : [];
 
-        setMachinery(
-          machineryCategory
-            ? allProducts.filter(
-              (product) =>
-                product.category_id === machineryCategory.id
-            )
-            : []
-        );
-      } catch (error) {
-        console.error("Error loading navigation products:", error);
+        const fetchedMachinery = machineryCategory
+          ? allProducts.filter((product) => product.category_id === machineryCategory.id)
+          : [];
+
+        setCommodities(fetchedCommodities.length > 0 ? fetchedCommodities : defaultCommodities);
+        setMachinery(fetchedMachinery.length > 0 ? fetchedMachinery : defaultMachinery);
+      } catch {
+        setCommodities(defaultCommodities);
+        setMachinery(defaultMachinery);
       } finally {
         setLoadingProducts(false);
       }
@@ -158,7 +171,6 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/95 backdrop-blur-md transition-all">
       <div className="mx-auto flex max-w-7xl items-center justify-between py-2.5 ">
-
         {/* Brand Logo & Name */}
         <Link
           to="/"
@@ -166,17 +178,18 @@ export function Header() {
         >
           <img
             src={logoAsset}
-            alt="AgriLink Kakuma LLC logo"
-            width={40}
-            height={40}
-            className="h-16 w-16 shrink-0 rounded-full object-cover ring-1 ring-border shadow-sm transition-transform duration-200 group-hover:scale-105"
+            alt="AgriLink EA Ltd. logo"
+            width={48}
+            height={48}
+            referrerPolicy="no-referrer"
+            className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-primary/20 shadow-sm transition-transform duration-200 group-hover:scale-105"
           />
           <div className="flex flex-col whitespace-nowrap">
             <span className="font-display text-base font-extrabold uppercase tracking-tight sm:text-lg">
-              Agri<span className="text-accent">Link</span> Kakuma LLC
+              Agri<span className="text-accent">Link</span> EA Ltd.
             </span>
             <span className="hidden text-[10px] font-semibold uppercase tracking-wider text-muted-foreground sm:block">
-              Agtech · Logistics · Intelligence
+              Empowering East African Agriculture
             </span>
           </div>
         </Link>
@@ -210,10 +223,7 @@ export function Header() {
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                align="start"
-                className="w-64 p-1.5 shadow-lg"
-              >
+              <DropdownMenuContent align="start" className="w-64 p-1.5 shadow-lg">
                 <DropdownMenuLabel className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   <Wheat className="h-3.5 w-3.5 text-accent" />
                   <a href="/services">Our Services</a>
@@ -242,11 +252,7 @@ export function Header() {
                         </DropdownMenuItem>
                       ) : commodities.length > 0 ? (
                         commodities.map((commodity) => (
-                          <DropdownMenuItem
-                            key={commodity.id}
-                            asChild
-                            className="rounded-md"
-                          >
+                          <DropdownMenuItem key={commodity.id} asChild className="rounded-md">
                             <Link
                               to="/shop"
                               search={{
@@ -287,11 +293,7 @@ export function Header() {
                       </DropdownMenuItem>
                     ) : machinery.length > 0 ? (
                       machinery.map((item) => (
-                        <DropdownMenuItem
-                          key={item.id}
-                          asChild
-                          className="rounded-md"
-                        >
+                        <DropdownMenuItem key={item.id} asChild className="rounded-md">
                           <Link
                             to="/shop"
                             search={{
@@ -326,11 +328,7 @@ export function Header() {
                     <DropdownMenuSeparator className="my-1" />
 
                     {FARM_ITEMS.map((item) => (
-                      <DropdownMenuItem
-                        key={item.id}
-                        asChild
-                        className="rounded-md"
-                      >
+                      <DropdownMenuItem key={item.id} asChild className="rounded-md">
                         <Link
                           to="/shop"
                           search={{ item: item.id }}
@@ -360,7 +358,6 @@ export function Header() {
           </nav>
 
           {/* Action Tools & Badges */}
-
         </div>
         <div className="flex items-center gap-1.5 border-l border-border/60 pl-3">
           {/* Language Picker */}
@@ -387,7 +384,13 @@ export function Header() {
           {/* </DropdownMenu> */}
 
           {/* Cart Icon */}
-          <Button asChild variant="ghost" size="icon" className="h-9 w-9 relative rounded-full" aria-label="Quote cart">
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            className="h-9 w-9 relative rounded-full"
+            aria-label="Quote cart"
+          >
             <Link to="/cart">
               <ShoppingCart className="h-4 w-4" />
               {count > 0 && (
@@ -439,9 +442,7 @@ export function Header() {
 
               {/* Buy Commodities */}
               <div className="mt-2">
-                <p className="px-3 py-1 text-xs font-semibold text-foreground">
-                  Buy Commodities
-                </p>
+                <p className="px-3 py-1 text-xs font-semibold text-foreground">Buy Commodities</p>
 
                 <div className="mt-1 grid grid-cols-2 gap-1 px-1">
                   {loadingProducts ? (
@@ -472,15 +473,11 @@ export function Header() {
 
               {/* Machinery */}
               <div className="mt-4 border-t border-border/40 pt-3">
-                <p className="px-3 py-1 text-xs font-semibold text-foreground">
-                  Machinery
-                </p>
+                <p className="px-3 py-1 text-xs font-semibold text-foreground">Machinery</p>
 
                 <div className="mt-1 flex flex-col gap-0.5 px-1">
                   {loadingProducts ? (
-                    <p className="px-3 py-2 text-xs text-muted-foreground">
-                      Loading machinery...
-                    </p>
+                    <p className="px-3 py-2 text-xs text-muted-foreground">Loading machinery...</p>
                   ) : machinery.length > 0 ? (
                     machinery.map((item) => (
                       <Link
@@ -505,9 +502,7 @@ export function Header() {
 
               {/* Farm */}
               <div className="mt-4 border-t border-border/40 pt-3">
-                <p className="px-3 py-1 text-xs font-semibold text-foreground">
-                  Farm
-                </p>
+                <p className="px-3 py-1 text-xs font-semibold text-foreground">Farm</p>
 
                 <div className="mt-1 flex flex-col gap-0.5 px-1">
                   {FARM_ITEMS.map((item) => (

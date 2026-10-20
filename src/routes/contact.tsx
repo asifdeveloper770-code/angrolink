@@ -21,16 +21,17 @@ import { submitContactForm } from "@/lib/supabase";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — AgriLink Kakuma LLC | Kakuma & Nairobi Offices" },
+      { title: "Contact — AgriLink EA Ltd. | Kenya & South Sudan" },
       {
         name: "description",
         content:
-          "Reach the AgriLink Kakuma team: corporate contact form, business emails, operational phone lines and office locations in Kakuma and Nairobi.",
+          "Reach the AgriLink EA Ltd. team: corporate contact form, business emails, operational phone lines and office locations in Kenya, South Sudan, and New York.",
       },
-      { property: "og:title", content: "Contact AgriLink Kakuma LLC" },
+      { property: "og:title", content: "Contact AgriLink EA Ltd." },
       {
         property: "og:description",
-        content: "Corporate enquiries, procurement, logistics and partnerships desks.",
+        content:
+          "Corporate enquiries, input distribution, commodities, logistics and partnerships.",
       },
     ],
   }),
@@ -54,7 +55,7 @@ const OFFICES = [
   },
   {
     city: "Juba office ",
-    lines: ["*****************","South Sudan"],
+    lines: ["*****************", "South Sudan"],
     phone: "+254 733 908 640",
     email: "commercial@agrilinkkakuma.co.ke",
   },
@@ -107,7 +108,6 @@ function Contact() {
     if (submitResult.success) {
       setSent(true);
       toast.success("Message sent. We reply within one business day.");
-      
     } else {
       toast.error("Failed to send message. Please try again.");
     }
@@ -148,13 +148,20 @@ function Contact() {
                 <h2 className="text-xl font-extrabold uppercase">Corporate enquiry</h2>
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider">Full name</Label>
+                    <Label className="text-xs font-semibold uppercase tracking-wider">
+                      Full name
+                    </Label>
                     <Input name="name" maxLength={100} placeholder="Jane Otieno" />
                     {err("name") && <p className="text-xs text-destructive">{err("name")}</p>}
                   </div>
                   <div className="space-y-2">
                     <Label className="text-xs font-semibold uppercase tracking-wider">Email</Label>
-                    <Input name="email" type="email" maxLength={255} placeholder="you@company.com" />
+                    <Input
+                      name="email"
+                      type="email"
+                      maxLength={255}
+                      placeholder="you@company.com"
+                    />
                     {err("email") && <p className="text-xs text-destructive">{err("email")}</p>}
                   </div>
                   <div className="space-y-2">
@@ -164,19 +171,25 @@ function Contact() {
                     <Input name="organisation" maxLength={120} placeholder="Optional" />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-xs font-semibold uppercase tracking-wider">Department</Label>
+                    <Label className="text-xs font-semibold uppercase tracking-wider">
+                      Department
+                    </Label>
                     <Select name="department">
                       <SelectTrigger>
                         <SelectValue placeholder="Select department" />
                       </SelectTrigger>
                       <SelectContent>
-                        {["Procurement", "Partnerships & Donors", "Logistics", "Media & Press", "General"].map(
-                          (d) => (
-                            <SelectItem key={d} value={d}>
-                              {d}
-                            </SelectItem>
-                          ),
-                        )}
+                        {[
+                          "Procurement",
+                          "Partnerships & Donors",
+                          "Logistics",
+                          "Media & Press",
+                          "General",
+                        ].map((d) => (
+                          <SelectItem key={d} value={d}>
+                            {d}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     {err("department") && (
@@ -186,7 +199,12 @@ function Contact() {
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs font-semibold uppercase tracking-wider">Message</Label>
-                  <Textarea name="message" rows={6} maxLength={1500} placeholder="How can we help?" />
+                  <Textarea
+                    name="message"
+                    rows={6}
+                    maxLength={1500}
+                    placeholder="How can we help?"
+                  />
                   {err("message") && <p className="text-xs text-destructive">{err("message")}</p>}
                 </div>
                 <Button type="submit" variant="gold" size="lg" className="w-full sm:w-auto">

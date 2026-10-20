@@ -9,6 +9,7 @@ import { DataPixels } from "@/components/site/DataPixels";
 import { useQuoteCart } from "@/lib/quote-cart";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
+import { PRODUCTS } from "@/lib/catalog";
 
 export const Route = createFileRoute("/shop/")({
   head: () => ({
@@ -27,8 +28,7 @@ export const Route = createFileRoute("/shop/")({
       },
       {
         property: "og:description",
-        content:
-          "Add graded commodities to a quote cart and run a corporate checkout in minutes.",
+        content: "Add graded commodities to a quote cart and run a corporate checkout in minutes.",
       },
     ],
   }),
@@ -69,10 +69,39 @@ function Shop() {
   async function loadProducts() {
     setLoading(true);
 
+    const catalogFallback: ShopProduct[] = PRODUCTS.map((p) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.id,
+      category_id: p.category.toLowerCase(),
+      category: p.category,
+      unit: p.unit,
+      pricePerUnit: p.pricePerUnit,
+      moq: p.moq,
+      origin: p.origin,
+      grade: p.grade,
+      lead: p.lead,
+      blurb: p.blurb,
+      spec: p.spec,
+      image: null,
+      active: true,
+    }));
+
     try {
+      const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"];
+      const isConfigured = Boolean(supabaseUrl) && !supabaseUrl.includes("placeholder-project");
+
+      if (!isConfigured) {
+        setProducts(catalogFallback);
+        setCategories(Array.from(new Set(catalogFallback.map((p) => p.category))));
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase
         .from("products")
-        .select(`
+        .select(
+          `
           id,
           name,
           slug,
@@ -92,7 +121,8 @@ function Shop() {
             name,
             slug
           )
-        `)
+        `,
+        )
         .eq("active", true)
         .order("sort_order", {
           ascending: true,
@@ -101,20 +131,38 @@ function Shop() {
           ascending: true,
         });
 
-      if (error) {
-        console.error("Error loading products:", error);
-        toast.error("Failed to load products");
+      if (error || !data || data.length === 0) {
+        setProducts(catalogFallback);
+        setCategories(Array.from(new Set(catalogFallback.map((p) => p.category))));
         return;
       }
 
-      const mappedProducts: ShopProduct[] = (data || []).map(
-        (product: any) => ({
+      interface RawProductRecord {
+        id: string;
+        name: string;
+        slug: string | null;
+        category_id: string;
+        categories?: { name?: string } | null;
+        unit?: string;
+        price_per_unit?: number | string;
+        moq?: number | string;
+        origin?: string;
+        grade?: string;
+        lead?: string;
+        blurb?: string;
+        description?: string;
+        spec?: string[];
+        image?: string | null;
+        active: boolean;
+      }
+
+      const mappedProducts: ShopProduct[] = ((data as unknown as RawProductRecord[]) || []).map(
+        (product) => ({
           id: product.id,
           name: product.name,
           slug: product.slug,
           category_id: product.category_id,
-          category:
-            product.categories?.name || "Uncategorized",
+          category: product.categories?.name || "Uncategorized",
           unit: product.unit || "unit",
           pricePerUnit: Number(product.price_per_unit || 0),
           moq: Number(product.moq || 1),
@@ -122,44 +170,34 @@ function Shop() {
           grade: product.grade || "",
           lead: product.lead || "",
           blurb: product.blurb || product.description || "",
-          spec: Array.isArray(product.spec)
-            ? product.spec
-            : [],
+          spec: Array.isArray(product.spec) ? product.spec : [],
           image: product.image || null,
           active: product.active,
-        })
+        }),
       );
 
       setProducts(mappedProducts);
 
       const uniqueCategories = Array.from(
-        new Set(
-          mappedProducts
-            .map((product) => product.category)
-            .filter(Boolean)
-        )
+        new Set(mappedProducts.map((product) => product.category).filter(Boolean)),
       );
 
       setCategories(uniqueCategories);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to load products");
+    } catch {
+      setProducts(catalogFallback);
+      setCategories(Array.from(new Set(catalogFallback.map((p) => p.category))));
     } finally {
       setLoading(false);
     }
   }
 
-  const categoryList = useMemo(
-    () => ["All", ...categories],
-    [categories]
-  );
+  const categoryList = useMemo(() => ["All", ...categories], [categories]);
 
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
 
     return products.filter((p) => {
-      const matchesCategory =
-        cat === "All" || p.category === cat;
+      const matchesCategory = cat === "All" || p.category === cat;
 
       const matchesSearch =
         q === "" ||
@@ -183,10 +221,8 @@ function Shop() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-primary-foreground/80">
-              Indicative wholesale pricing in KSH, ex-Kakuma yard.
-              Add commodities to your quote cart — a contract
-              specialist confirms final pricing, incoterms and
-              delivery windows.
+              Indicative wholesale pricing in KSH, ex-Kakuma yard. Add commodities to your quote
+              cart — a contract specialist confirms final pricing, incoterms and delivery windows.
             </p>
           </Reveal>
         </div>
@@ -218,7 +254,7 @@ function Shop() {
                     "rounded-full border px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors",
                     cat === c
                       ? "border-transparent bg-gold text-gold-foreground"
-                      : "border-border bg-card text-muted-foreground hover:border-accent hover:text-primary"
+                      : "border-border bg-card text-muted-foreground hover:border-accent hover:text-primary",
                   )}
                 >
                   {c}
@@ -229,101 +265,88 @@ function Shop() {
         </Reveal>
 
         {loading ? (
-          <div className="py-20 text-center text-muted-foreground">
-            Loading commodities...
-          </div>
+          <div className="py-20 text-center text-muted-foreground">Loading commodities...</div>
         ) : (
           <>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
               {list.map((p, i) => (
-  <Reveal key={p.id} delay={(i % 4) * 70}>
-    <article className="lift flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card hover:border-accent">
-      
-      {/* Product Image */}
-      <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
-        {p.image ? (
-          <img
-            src={p.image}
-            alt={p.name}
-            className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-            loading="lazy"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-            No image available
-          </div>
-        )}
-      </div>
+                <Reveal key={p.id} delay={(i % 4) * 70}>
+                  <article className="lift flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card hover:border-accent">
+                    {/* Product Image */}
+                    <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
+                      {p.image ? (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                          No image available
+                        </div>
+                      )}
+                    </div>
 
-      {/* Product Content */}
-      <div className="flex flex-1 flex-col p-6">
-        <div className="flex items-center justify-between gap-2">
-          <span className="rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
-            {p.category}
-          </span>
+                    {/* Product Content */}
+                    <div className="flex flex-1 flex-col p-6">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
+                          {p.category}
+                        </span>
 
-          {p.grade && (
-            <span className="text-[10px] font-bold uppercase tracking-wider text-accent">
-              {p.grade}
-            </span>
-          )}
-        </div>
+                        {p.grade && (
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-accent">
+                            {p.grade}
+                          </span>
+                        )}
+                      </div>
 
-        <h2 className="mt-4 text-lg font-bold leading-snug">
-          {p.name}
-        </h2>
+                      <h2 className="mt-4 text-lg font-bold leading-snug">{p.name}</h2>
 
-        {p.origin && (
-          <p className="mt-2 text-xs text-muted-foreground">
-            {p.origin}
-          </p>
-        )}
+                      {p.origin && <p className="mt-2 text-xs text-muted-foreground">{p.origin}</p>}
 
-        <p className="mt-3 flex-1 text-sm text-muted-foreground">
-          {p.blurb}
-        </p>
+                      <p className="mt-3 flex-1 text-sm text-muted-foreground">{p.blurb}</p>
 
-        <div className="mt-5 flex items-end justify-between border-t border-border pt-4">
-          <div>
-            <p className="font-display text-2xl font-extrabold text-primary">
-              KSH {p.pricePerUnit.toLocaleString()}
-            </p>
+                      <div className="mt-5 flex items-end justify-between border-t border-border pt-4">
+                        <div>
+                          <p className="font-display text-2xl font-extrabold text-primary">
+                            KSH {p.pricePerUnit.toLocaleString()}
+                          </p>
 
-            <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
-              per {p.unit} · MOQ {p.moq}
-            </p>
-          </div>
+                          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">
+                            per {p.unit} · MOQ {p.moq}
+                          </p>
+                        </div>
 
-          <Link
-            to="/shop/$productId"
-            params={{
-              productId: p.id,
-            }}
-            className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-accent"
-          >
-            Details
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </Link>
-        </div>
+                        <Link
+                          to="/shop/$productId"
+                          params={{
+                            productId: p.id,
+                          }}
+                          className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:text-accent"
+                        >
+                          Details
+                          <ArrowUpRight className="h-3.5 w-3.5" />
+                        </Link>
+                      </div>
 
-        <Button
-          variant="gold"
-          className="mt-4"
-          onClick={() => {
-            add(p.id, p.moq);
+                      <Button
+                        variant="gold"
+                        className="mt-4"
+                        onClick={() => {
+                          add(p.id, p.moq);
 
-            toast.success(
-              `${p.name} added to quote cart (${p.moq} ${p.unit}).`
-            );
-          }}
-        >
-          <Plus />
-          Add to quote
-        </Button>
-      </div>
-    </article>
-  </Reveal>
-))}
+                          toast.success(`${p.name} added to quote cart (${p.moq} ${p.unit}).`);
+                        }}
+                      >
+                        <Plus />
+                        Add to quote
+                      </Button>
+                    </div>
+                  </article>
+                </Reveal>
+              ))}
             </div>
 
             {list.length === 0 && (

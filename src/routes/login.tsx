@@ -93,9 +93,7 @@ function LoginPage() {
 
           <h1 className="text-2xl font-bold">Admin Login</h1>
 
-          <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to access the dashboard.
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">Sign in to access the dashboard.</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
@@ -129,11 +127,7 @@ function LoginPage() {
             />
           </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={loading}
-          >
+          <Button type="submit" className="w-full" disabled={loading}>
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -148,4 +142,3 @@ function LoginPage() {
     </div>
   );
 }
-

@@ -21,17 +21,17 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/partner")({
   head: () => ({
     meta: [
-      { title: "Partner With Us — Intake Portals | AgriLink Kakuma LLC" },
+      { title: "Partner With Us — Intake Portals | AgriLink EA Ltd." },
       {
         name: "description",
         content:
-          "Register as a farmer, submit a commercial off-taker inquiry, or apply as a logistics partner with AgriLink Kakuma.",
+          "Register as a farmer, submit a commercial off-taker inquiry, or apply as a logistics partner with AgriLink EA Ltd across Kenya and South Sudan.",
       },
-      { property: "og:title", content: "Partner With Us — AgriLink Kakuma Intake Portals" },
+      { property: "og:title", content: "Partner With Us — AgriLink EA Ltd. Intake Portals" },
       {
         property: "og:description",
         content:
-          "Multi-sided onboarding for producers, commercial buyers and truck owner-operators in Turkana County.",
+          "Multi-sided onboarding for producers, commercial buyers and logistics operators across East Africa.",
       },
     ],
   }),
@@ -182,9 +182,7 @@ function Partner() {
                 <span
                   className={cn(
                     "grid h-11 w-11 place-items-center rounded-lg transition-colors",
-                    portal === p.key
-                      ? "bg-gold text-gold-foreground"
-                      : "bg-secondary text-primary",
+                    portal === p.key ? "bg-gold text-gold-foreground" : "bg-secondary text-primary",
                   )}
                 >
                   <p.icon className="h-5 w-5" />
@@ -233,13 +231,19 @@ function Partner() {
                           <SelectValue placeholder="Select crop" />
                         </SelectTrigger>
                         <SelectContent>
-                          {["Sorghum", "Green grams", "Cowpeas", "Kale", "Tomatoes", "Sesame", "Livestock"].map(
-                            (c) => (
-                              <SelectItem key={c} value={c}>
-                                {c}
-                              </SelectItem>
-                            ),
-                          )}
+                          {[
+                            "Sorghum",
+                            "Green grams",
+                            "Cowpeas",
+                            "Kale",
+                            "Tomatoes",
+                            "Sesame",
+                            "Livestock",
+                          ].map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </Field>
@@ -261,7 +265,12 @@ function Partner() {
                       <Input name="contactName" maxLength={100} placeholder="Jane Otieno" />
                     </Field>
                     <Field label="Business email" error={err("email")}>
-                      <Input name="email" type="email" maxLength={255} placeholder="procurement@company.com" />
+                      <Input
+                        name="email"
+                        type="email"
+                        maxLength={255}
+                        placeholder="procurement@company.com"
+                      />
                     </Field>
                     <Field label="Commodity of interest" error={err("commodity")}>
                       <Select name="commodity">
@@ -269,13 +278,18 @@ function Partner() {
                           <SelectValue placeholder="Select commodity" />
                         </SelectTrigger>
                         <SelectContent>
-                          {["Cereals", "Pulses", "Fresh Produce", "Livestock", "Oilseeds", "Specialty"].map(
-                            (c) => (
-                              <SelectItem key={c} value={c}>
-                                {c}
-                              </SelectItem>
-                            ),
-                          )}
+                          {[
+                            "Cereals",
+                            "Pulses",
+                            "Fresh Produce",
+                            "Livestock",
+                            "Oilseeds",
+                            "Specialty",
+                          ].map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </Field>
@@ -288,7 +302,13 @@ function Partner() {
                           <SelectValue placeholder="Select frequency" />
                         </SelectTrigger>
                         <SelectContent>
-                          {["One-off", "Weekly", "Fortnightly", "Monthly", "Quarterly contract"].map((f) => (
+                          {[
+                            "One-off",
+                            "Weekly",
+                            "Fortnightly",
+                            "Monthly",
+                            "Quarterly contract",
+                          ].map((f) => (
                             <SelectItem key={f} value={f}>
                               {f}
                             </SelectItem>
@@ -312,7 +332,11 @@ function Partner() {
                 {portal === "logistics" && (
                   <div className="grid gap-5 sm:grid-cols-2">
                     <Field label="Operator name" error={err("operatorName")}>
-                      <Input name="operatorName" maxLength={100} placeholder="Hassan Transporters" />
+                      <Input
+                        name="operatorName"
+                        maxLength={100}
+                        placeholder="Hassan Transporters"
+                      />
                     </Field>
                     <Field label="Mobile number" error={err("phone")}>
                       <Input name="phone" inputMode="tel" maxLength={20} placeholder="+254 7.." />
@@ -326,13 +350,17 @@ function Partner() {
                           <SelectValue placeholder="Select vehicle" />
                         </SelectTrigger>
                         <SelectContent>
-                          {["Pickup (1-2T)", "Light truck (3-7T)", "Heavy truck (10T+)", "Reefer truck", "Motorcycle"].map(
-                            (v) => (
-                              <SelectItem key={v} value={v}>
-                                {v}
-                              </SelectItem>
-                            ),
-                          )}
+                          {[
+                            "Pickup (1-2T)",
+                            "Light truck (3-7T)",
+                            "Heavy truck (10T+)",
+                            "Reefer truck",
+                            "Motorcycle",
+                          ].map((v) => (
+                            <SelectItem key={v} value={v}>
+                              {v}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </Field>

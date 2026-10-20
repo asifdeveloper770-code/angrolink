@@ -1,11 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  Snowflake,
-  Tractor,
-  Truck,
-  MonitorSmartphone,
-  Handshake,
-} from "lucide-react";
+import { Snowflake, Tractor, Truck, MonitorSmartphone, Handshake } from "lucide-react";
 
 export const Route = createFileRoute("/investment-partnership")({
   component: InvestmentPartnershipPage,
@@ -59,9 +53,8 @@ function InvestmentPartnershipPage() {
             </h1>
 
             <p className="mt-6 text-base leading-7 text-muted-foreground sm:text-lg">
-              We invite visionary investors, impact funds, and development
-              partners to join us in scaling our operations across four
-              critical, high-yield infrastructure pillars.
+              We invite visionary investors, impact funds, and development partners to join us in
+              scaling our operations across four critical, high-yield infrastructure pillars.
             </p>
           </div>
         </div>

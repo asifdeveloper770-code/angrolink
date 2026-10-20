@@ -14,7 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Header } from "@/components/site/Header";
 import { Footer } from "@/components/site/Footer";
 import { QuoteCartProvider } from "@/lib/quote-cart";
-import { Toaster } from "@/components/ui/sonner";/
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -81,21 +81,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AgriLink Kakuma LLC — Agtech, Logistics & Market Intelligence" },
+      { title: "AgriLink EA Ltd. — Empowering East African Agriculture" },
       {
         name: "description",
         content:
-          "Agricultural aggregation, cold-chain logistics and market intelligence across Turkana County, Kenya.",
+          "AgriLink EA Ltd connects farmers directly to B2B buyers through a digital marketplace, delivering inputs and solar cold storage across Kenya and South Sudan.",
       },
-      { name: "author", content: "AgriLink Kakuma LLC" },
-      { property: "og:title", content: "AgriLink Kakuma LLC" },
+      { name: "author", content: "AgriLink EA Ltd." },
+      { property: "og:title", content: "AgriLink EA Ltd. — Empowering East African Agriculture" },
       {
         property: "og:description",
-        content: "Resilient food corridors for arid-land producers and commercial buyers.",
+        content:
+          "Transforming farming into an engine for community development and economic resilience across Kenya and South Sudan.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      
     ],
     links: [
       {

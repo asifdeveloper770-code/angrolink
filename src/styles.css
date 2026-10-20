@@ -90,14 +90,18 @@
   --sidebar-border: oklch(0.9 0.015 150);
   --sidebar-ring: oklch(0.63 0.15 148);
 
-  --gradient-forest: linear-gradient(140deg, var(--primary-deep) 0%, var(--primary) 55%, oklch(0.45 0.1 150) 100%);
+  --gradient-forest: linear-gradient(
+    140deg,
+    var(--primary-deep) 0%,
+    var(--primary) 55%,
+    oklch(0.45 0.1 150) 100%
+  );
   --gradient-gold: linear-gradient(100deg, var(--gold) 0%, oklch(0.82 0.13 85) 100%);
   --shadow-elevate: 0 18px 40px -22px color-mix(in oklab, var(--primary) 55%, transparent);
   --shadow-gold: 0 14px 34px -14px color-mix(in oklab, var(--gold) 60%, transparent);
   --shadow-frame: 0 40px 90px -45px oklch(0.15 0.04 158 / 0.75);
   --space-section: clamp(4.5rem, 8vw, 8rem);
 }
-
 
 .dark {
   --background: oklch(0.18 0.025 158);
@@ -146,14 +150,18 @@
     text-rendering: optimizeLegibility;
   }
 
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     letter-spacing: -0.035em;
     line-height: 1.02;
     text-wrap: balance;
   }
 
-  h3, h4 {
+  h3,
+  h4 {
     line-height: 1.15;
     letter-spacing: -0.025em;
   }
@@ -191,8 +199,16 @@
 
 @utility grid-mesh {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, currentColor 9%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, currentColor 9%, transparent) 1px, transparent 1px);
+    linear-gradient(
+      to right,
+      color-mix(in oklab, currentColor 9%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in oklab, currentColor 9%, transparent) 1px,
+      transparent 1px
+    );
   background-size: 68px 68px;
   mask-image: radial-gradient(circle at 30% 40%, #000 0%, transparent 78%);
 }
@@ -200,7 +216,6 @@
 @utility frame-shadow {
   box-shadow: var(--shadow-frame);
 }
-
 
 @utility surface-forest {
   background-image: var(--gradient-forest);

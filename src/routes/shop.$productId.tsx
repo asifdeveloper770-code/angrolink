@@ -1,23 +1,13 @@
 import { useEffect, useState } from "react";
-import {
-  createFileRoute,
-  Link,
-  notFound,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { toast } from "sonner";
-import {
-  ArrowLeft,
-  Plus,
-  Minus,
-  ShieldCheck,
-  Clock,
-  Boxes,
-} from "lucide-react";
+import { ArrowLeft, Plus, Minus, ShieldCheck, Clock, Boxes } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/Reveal";
 import { DataPixels } from "@/components/site/DataPixels";
 import { useQuoteCart } from "@/lib/quote-cart";
 import { supabase } from "@/lib/supabase";
+import { findProduct } from "@/lib/catalog";
 
 type Product = {
   id: string;
@@ -39,79 +29,91 @@ type Product = {
 
 export const Route = createFileRoute("/shop/$productId")({
   loader: async ({ params }) => {
-    const { data, error } = await supabase
-      .from("products")
-      .select(`
-        id,
-        name,
-        slug,
-        category_id,
-        unit,
-        price_per_unit,
-        moq,
-        origin,
-        grade,
-        lead,
-        blurb,
-        description,
-        spec,
-        image,
-        active,
-        categories (
-          id,
-          name,
-          slug
-        )
-      `)
-      .eq("id", params.productId)
-      .eq("active", true)
-      .maybeSingle();
+    try {
+      const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"];
+      const isConfigured = Boolean(supabaseUrl) && !supabaseUrl.includes("placeholder-project");
 
-    if (error) {
-      console.error(
-        "Error loading product:",
-        error
-      );
+      if (isConfigured) {
+        const { data } = await supabase
+          .from("products")
+          .select(
+            `
+            id,
+            name,
+            slug,
+            category_id,
+            unit,
+            price_per_unit,
+            moq,
+            origin,
+            grade,
+            lead,
+            blurb,
+            description,
+            spec,
+            image,
+            active,
+            categories (
+              id,
+              name,
+              slug
+            )
+          `,
+          )
+          .eq("id", params.productId)
+          .eq("active", true)
+          .maybeSingle();
 
-      throw new Error(
-        "Failed to load product"
-      );
+        if (data) {
+          const product: Product = {
+            id: data.id,
+            name: data.name,
+            slug: data.slug,
+            category_id: data.category_id,
+            category: (data.categories as { name?: string } | null)?.name || "Uncategorized",
+            unit: data.unit || "unit",
+            pricePerUnit: Number(data.price_per_unit || 0),
+            moq: Number(data.moq || 1),
+            origin: data.origin || "",
+            grade: data.grade || "",
+            lead: data.lead || "",
+            blurb: data.blurb || data.description || "",
+            spec: Array.isArray(data.spec) ? data.spec : [],
+            image: data.image || null,
+            active: data.active,
+          };
+
+          return { product };
+        }
+      }
+    } catch {
+      // Fall through to local catalog lookup
     }
 
-    if (!data) {
-      throw notFound();
+    const localItem = findProduct(params.productId);
+    if (localItem) {
+      const product: Product = {
+        id: localItem.id,
+        name: localItem.name,
+        slug: localItem.id,
+        category_id: localItem.category.toLowerCase(),
+        category: localItem.category,
+        unit: localItem.unit,
+        pricePerUnit: localItem.pricePerUnit,
+        moq: localItem.moq,
+        origin: localItem.origin,
+        grade: localItem.grade,
+        lead: localItem.lead,
+        blurb: localItem.blurb,
+        spec: localItem.spec,
+        image: null,
+        active: true,
+      };
+
+      return { product };
     }
 
-    const product: Product = {
-      id: data.id,
-      name: data.name,
-      slug: data.slug,
-      category_id: data.category_id,
-      category:
-        (data.categories as any)?.name ||
-        "Uncategorized",
-      unit: data.unit || "unit",
-      pricePerUnit: Number(
-        data.price_per_unit || 0
-      ),
-      moq: Number(data.moq || 1),
-      origin: data.origin || "",
-      grade: data.grade || "",
-      lead: data.lead || "",
-      blurb:
-        data.blurb ||
-        data.description ||
-        "",
-      spec: Array.isArray(data.spec)
-        ? data.spec
-        : [],
-      image: data.image || null,
-      active: data.active,
-    };
-
-    return {
-      product,
-    };
+    throw notFound();
   },
 
   head: ({ loaderData }) => {
@@ -119,8 +121,7 @@ export const Route = createFileRoute("/shop/$productId")({
       return {
         meta: [
           {
-            title:
-              "Commodity unavailable — AgriLink Kakuma",
+            title: "Commodity unavailable — AgriLink Kakuma",
           },
           {
             name: "robots",
@@ -157,14 +158,11 @@ export const Route = createFileRoute("/shop/$productId")({
 });
 
 function ProductView() {
-  const { product } =
-    Route.useLoaderData();
+  const { product } = Route.useLoaderData();
 
   const { add } = useQuoteCart();
 
-  const [qty, setQty] = useState(
-    product.moq
-  );
+  const [qty, setQty] = useState(product.moq);
 
   useEffect(() => {
     setQty(product.moq);
@@ -191,11 +189,9 @@ function ProductView() {
           <p className="mt-3 text-primary-foreground/80">
             {product.category}
 
-            {product.grade &&
-              ` · ${product.grade}`}
+            {product.grade && ` · ${product.grade}`}
 
-            {product.origin &&
-              ` · ${product.origin}`}
+            {product.origin && ` · ${product.origin}`}
           </p>
         </div>
       </section>
@@ -213,28 +209,22 @@ function ProductView() {
               </div>
             )}
 
-            <p className="text-lg text-muted-foreground">
-              {product.blurb}
-            </p>
+            <p className="text-lg text-muted-foreground">{product.blurb}</p>
 
             {product.spec.length > 0 && (
               <div>
-                <h2 className="text-lg font-extrabold uppercase">
-                  Specification
-                </h2>
+                <h2 className="text-lg font-extrabold uppercase">Specification</h2>
 
                 <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-                  {product.spec.map(
-                    (s) => (
-                      <li
-                        key={s}
-                        className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm"
-                      >
-                        <span className="h-1.5 w-1.5 shrink-0 rounded-[1px] bg-gold" />
-                        {s}
-                      </li>
-                    )
-                  )}
+                  {product.spec.map((s) => (
+                    <li
+                      key={s}
+                      className="flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-3 text-sm"
+                    >
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-[1px] bg-gold" />
+                      {s}
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}
@@ -244,16 +234,12 @@ function ProductView() {
                 {
                   icon: ShieldCheck,
                   label: "Grade",
-                  value:
-                    product.grade ||
-                    "Standard",
+                  value: product.grade || "Standard",
                 },
                 {
                   icon: Clock,
                   label: "Lead time",
-                  value:
-                    product.lead ||
-                    "Contact us",
+                  value: product.lead || "Contact us",
                 },
                 {
                   icon: Boxes,
@@ -261,22 +247,14 @@ function ProductView() {
                   value: `${product.moq} ${product.unit}`,
                 },
               ].map((f) => (
-                <div
-                  key={f.label}
-                  className="lift rounded-xl border border-border bg-card p-5"
-                >
-                  <f.icon
-                    className="h-5 w-5 text-accent"
-                    strokeWidth={1.5}
-                  />
+                <div key={f.label} className="lift rounded-xl border border-border bg-card p-5">
+                  <f.icon className="h-5 w-5 text-accent" strokeWidth={1.5} />
 
                   <p className="mt-3 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                     {f.label}
                   </p>
 
-                  <p className="mt-1 font-semibold">
-                    {f.value}
-                  </p>
+                  <p className="mt-1 font-semibold">{f.value}</p>
                 </div>
               ))}
             </div>
@@ -290,8 +268,7 @@ function ProductView() {
             </p>
 
             <p className="mt-1 font-display text-4xl font-extrabold text-primary">
-              $
-              {product.pricePerUnit.toLocaleString()}
+              ${product.pricePerUnit.toLocaleString()}
               <span className="text-base font-semibold text-muted-foreground">
                 {" "}
                 / {product.unit}
@@ -308,14 +285,7 @@ function ProductView() {
                   variant="outline"
                   size="icon"
                   aria-label="Decrease quantity"
-                  onClick={() =>
-                    setQty((q) =>
-                      Math.max(
-                        product.moq,
-                        q - 1
-                      )
-                    )
-                  }
+                  onClick={() => setQty((q) => Math.max(product.moq, q - 1))}
                 >
                   <Minus />
                 </Button>
@@ -328,34 +298,22 @@ function ProductView() {
                   variant="outline"
                   size="icon"
                   aria-label="Increase quantity"
-                  onClick={() =>
-                    setQty(
-                      (q) => q + 1
-                    )
-                  }
+                  onClick={() => setQty((q) => q + 1)}
                 >
                   <Plus />
                 </Button>
               </div>
 
               <p className="mt-2 text-xs text-muted-foreground">
-                Minimum order quantity:{" "}
-                {product.moq}{" "}
-                {product.unit}
+                Minimum order quantity: {product.moq} {product.unit}
               </p>
             </div>
 
             <div className="mt-6 flex items-center justify-between border-t border-border pt-5">
-              <span className="text-sm text-muted-foreground">
-                Line estimate
-              </span>
+              <span className="text-sm text-muted-foreground">Line estimate</span>
 
               <span className="font-display text-xl font-extrabold">
-                $
-                {(
-                  product.pricePerUnit *
-                  qty
-                ).toLocaleString()}
+                ${(product.pricePerUnit * qty).toLocaleString()}
               </span>
             </div>
 
@@ -366,22 +324,14 @@ function ProductView() {
               onClick={() => {
                 add(product.id, qty);
 
-                toast.success(
-                  `${qty} ${product.unit} of ${product.name} added to quote cart.`
-                );
+                toast.success(`${qty} ${product.unit} of ${product.name} added to quote cart.`);
               }}
             >
               Add to quote cart
             </Button>
 
-            <Button
-              asChild
-              variant="outline"
-              className="mt-3 w-full"
-            >
-              <Link to="/cart">
-                View quote cart
-              </Link>
+            <Button asChild variant="outline" className="mt-3 w-full">
+              <Link to="/cart">View quote cart</Link>
             </Button>
           </div>
         </Reveal>

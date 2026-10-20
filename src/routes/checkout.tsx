@@ -79,7 +79,7 @@ function Checkout() {
       return;
     }
     setErrors({});
-    
+
     // Submit order to Supabase
     const submitResult = await submitCheckoutOrder({
       customer_name: String(data.company),
@@ -91,7 +91,7 @@ function Checkout() {
       items: JSON.stringify(detailed),
       total_amount: total,
     });
-    
+
     if (submitResult.success) {
       const ref = `AGL-${Math.floor(100000 + Math.random() * 899999)}`;
       setDone(ref);
@@ -164,11 +164,7 @@ function Checkout() {
             <ol className="mb-8 grid grid-cols-3 gap-2">
               {STEPS.map((s, i) => (
                 <li key={s}>
-                  <button
-                    type="button"
-                    onClick={() => setStep(i)}
-                    className="w-full text-left"
-                  >
+                  <button type="button" onClick={() => setStep(i)} className="w-full text-left">
                     <span
                       className={cn(
                         "block h-1 rounded-full transition-colors",
@@ -196,13 +192,22 @@ function Checkout() {
                   {err("company") && <p className="text-xs text-destructive">{err("company")}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold uppercase tracking-wider">Contact name</Label>
+                  <Label className="text-xs font-semibold uppercase tracking-wider">
+                    Contact name
+                  </Label>
                   <Input name="contact" maxLength={100} placeholder="Jane Otieno" />
                   {err("contact") && <p className="text-xs text-destructive">{err("contact")}</p>}
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-xs font-semibold uppercase tracking-wider">Business email</Label>
-                  <Input name="email" type="email" maxLength={255} placeholder="procurement@company.com" />
+                  <Label className="text-xs font-semibold uppercase tracking-wider">
+                    Business email
+                  </Label>
+                  <Input
+                    name="email"
+                    type="email"
+                    maxLength={255}
+                    placeholder="procurement@company.com"
+                  />
                   {err("email") && <p className="text-xs text-destructive">{err("email")}</p>}
                 </div>
                 <div className="space-y-2">
@@ -217,7 +222,11 @@ function Checkout() {
                   <Label className="text-xs font-semibold uppercase tracking-wider">
                     Delivery destination
                   </Label>
-                  <Input name="destination" maxLength={160} placeholder="Industrial Area, Nairobi" />
+                  <Input
+                    name="destination"
+                    maxLength={160}
+                    placeholder="Industrial Area, Nairobi"
+                  />
                   {err("destination") && (
                     <p className="text-xs text-destructive">{err("destination")}</p>
                   )}
@@ -229,23 +238,7 @@ function Checkout() {
                       <SelectValue placeholder="Select incoterm" />
                     </SelectTrigger>
                     <SelectContent>
-                      {["EXW Kakuma", "FCA Lodwar", "DAP Nairobi", "DAP Juba", "CIF Mombasa"].map((t) => (
-                        <SelectItem key={t} value={t}>
-                          {t}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {err("incoterm") && <p className="text-xs text-destructive">{err("incoterm")}</p>}
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs font-semibold uppercase tracking-wider">Payment terms</Label>
-                  <Select name="payment">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select terms" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["50% deposit / 50% on delivery", "Net 30 (approved accounts)", "Letter of credit", "Escrowed milestones"].map(
+                      {["EXW Kakuma", "FCA Lodwar", "DAP Nairobi", "DAP Juba", "CIF Mombasa"].map(
                         (t) => (
                           <SelectItem key={t} value={t}>
                             {t}
@@ -254,13 +247,41 @@ function Checkout() {
                       )}
                     </SelectContent>
                   </Select>
+                  {err("incoterm") && <p className="text-xs text-destructive">{err("incoterm")}</p>}
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs font-semibold uppercase tracking-wider">
+                    Payment terms
+                  </Label>
+                  <Select name="payment">
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select terms" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[
+                        "50% deposit / 50% on delivery",
+                        "Net 30 (approved accounts)",
+                        "Letter of credit",
+                        "Escrowed milestones",
+                      ].map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   {err("payment") && <p className="text-xs text-destructive">{err("payment")}</p>}
                 </div>
                 <div className="space-y-2 sm:col-span-2">
                   <Label className="text-xs font-semibold uppercase tracking-wider">
                     Additional requirements
                   </Label>
-                  <Textarea name="notes" rows={4} maxLength={1000} placeholder="Packaging, inspection, documentation..." />
+                  <Textarea
+                    name="notes"
+                    rows={4}
+                    maxLength={1000}
+                    placeholder="Packaging, inspection, documentation..."
+                  />
                 </div>
               </div>
 

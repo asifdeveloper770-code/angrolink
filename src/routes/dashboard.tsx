@@ -31,6 +31,8 @@ import {
   getContacts,
   type ServiceEntry,
   type KnowledgeHubArticle,
+  type CheckoutOrder,
+  type ContactSubmission,
   supabase,
 } from "@/lib/supabase";
 import { AlertCircle, Trash2, Edit2, X } from "lucide-react";
@@ -51,7 +53,7 @@ export const Route = createFileRoute("/dashboard")({
 interface EditingItem {
   type: "service" | "article";
   id?: string;
-  data: any;
+  data: ServiceEntry | KnowledgeHubArticle | Record<string, unknown>;
 }
 
 function getErrorMessage(error: unknown, fallback: string) {
@@ -75,8 +77,8 @@ function getErrorMessage(error: unknown, fallback: string) {
 function Dashboard() {
   const [services, setServices] = useState<ServiceEntry[]>([]);
   const [articles, setArticles] = useState<KnowledgeHubArticle[]>([]);
-  const [orders, setOrders] = useState<any[]>([]);
-  const [contacts, setContacts] = useState<any[]>([]);
+  const [orders, setOrders] = useState<CheckoutOrder[]>([]);
+  const [contacts, setContacts] = useState<ContactSubmission[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<EditingItem | null>(null);
   const navigate = useNavigate();
@@ -88,45 +90,24 @@ function Dashboard() {
   const [orderPage, setOrderPage] = useState(1);
   const [contactPage, setContactPage] = useState(1);
 
-  const paginatedServices = services.slice(
-    (servicePage - 1) * PAGE_SIZE,
-    servicePage * PAGE_SIZE
-  );
+  const paginatedServices = services.slice((servicePage - 1) * PAGE_SIZE, servicePage * PAGE_SIZE);
 
   const paginatedArticles = articles.slice(
     (knowledgePage - 1) * PAGE_SIZE,
-    knowledgePage * PAGE_SIZE
+    knowledgePage * PAGE_SIZE,
   );
 
-  const paginatedOrders = orders.slice(
-    (orderPage - 1) * PAGE_SIZE,
-    orderPage * PAGE_SIZE
-  );
+  const paginatedOrders = orders.slice((orderPage - 1) * PAGE_SIZE, orderPage * PAGE_SIZE);
 
-  const paginatedContacts = contacts.slice(
-    (contactPage - 1) * PAGE_SIZE,
-    contactPage * PAGE_SIZE
-  );
+  const paginatedContacts = contacts.slice((contactPage - 1) * PAGE_SIZE, contactPage * PAGE_SIZE);
 
-  const serviceTotalPages = Math.max(
-    1,
-    Math.ceil(services.length / PAGE_SIZE)
-  );
+  const serviceTotalPages = Math.max(1, Math.ceil(services.length / PAGE_SIZE));
 
-  const knowledgeTotalPages = Math.max(
-    1,
-    Math.ceil(articles.length / PAGE_SIZE)
-  );
+  const knowledgeTotalPages = Math.max(1, Math.ceil(articles.length / PAGE_SIZE));
 
-  const orderTotalPages = Math.max(
-    1,
-    Math.ceil(orders.length / PAGE_SIZE)
-  );
+  const orderTotalPages = Math.max(1, Math.ceil(orders.length / PAGE_SIZE));
 
-  const contactTotalPages = Math.max(
-    1,
-    Math.ceil(contacts.length / PAGE_SIZE)
-  );
+  const contactTotalPages = Math.max(1, Math.ceil(contacts.length / PAGE_SIZE));
 
   useEffect(() => {
     checkAuth();
@@ -173,9 +154,7 @@ function Dashboard() {
     }
   }
 
-  async function handleServiceSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleServiceSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -209,16 +188,12 @@ function Dashboard() {
           : await addService(serviceData);
 
       if (!result.success) {
-        toast.error(
-          getErrorMessage(result.error, "Failed to save service")
-        );
+        toast.error(getErrorMessage(result.error, "Failed to save service"));
         return;
       }
 
       toast.success(
-        editing?.type === "service"
-          ? "Service updated successfully"
-          : "Service added successfully"
+        editing?.type === "service" ? "Service updated successfully" : "Service added successfully",
       );
 
       setEditing(null);
@@ -230,9 +205,7 @@ function Dashboard() {
     }
   }
 
-  async function handleArticleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleArticleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
@@ -258,23 +231,16 @@ function Dashboard() {
     try {
       const result =
         editing?.type === "article" && editing.id
-          ? await updateKnowledgeArticle(
-            editing.id,
-            articleData
-          )
+          ? await updateKnowledgeArticle(editing.id, articleData)
           : await addKnowledgeArticle(articleData);
 
       if (!result.success) {
-        toast.error(
-          getErrorMessage(result.error, "Failed to save article")
-        );
+        toast.error(getErrorMessage(result.error, "Failed to save article"));
         return;
       }
 
       toast.success(
-        editing?.type === "article"
-          ? "Article updated successfully"
-          : "Article added successfully"
+        editing?.type === "article" ? "Article updated successfully" : "Article added successfully",
       );
 
       setEditing(null);
@@ -303,11 +269,7 @@ function Dashboard() {
     }
   }
   async function handleDeleteArticle(id: string) {
-    if (
-      !confirm(
-        "Are you sure you want to delete this knowledge article?"
-      )
-    ) {
+    if (!confirm("Are you sure you want to delete this knowledge article?")) {
       return;
     }
 
@@ -320,20 +282,10 @@ function Dashboard() {
 
         // Keep page valid after deletion
         setKnowledgePage((currentPage) =>
-          Math.min(
-            currentPage,
-            Math.max(
-              1,
-              Math.ceil(
-                (articles.length - 1) / PAGE_SIZE
-              )
-            )
-          )
+          Math.min(currentPage, Math.max(1, Math.ceil((articles.length - 1) / PAGE_SIZE))),
         );
       } else {
-        toast.error(
-          getErrorMessage(result.error, "Failed to delete article")
-        );
+        toast.error(getErrorMessage(result.error, "Failed to delete article"));
       }
     } catch (error) {
       console.error(error);
@@ -359,9 +311,7 @@ function Dashboard() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin mx-auto mb-3 h-8 w-8 rounded-full border-2 border-primary border-t-transparent" />
-          <p className="text-muted-foreground">
-            Checking authentication...
-          </p>
+          <p className="text-muted-foreground">Checking authentication...</p>
         </div>
       </div>
     );
@@ -385,25 +335,15 @@ function Dashboard() {
         ) : (
           <Tabs defaultValue="services" className="space-y-4">
             <TabsList className="grid w-full grid-cols-6">
-              <TabsTrigger value="services">
-                Services
-              </TabsTrigger>
+              <TabsTrigger value="services">Services</TabsTrigger>
 
-              <TabsTrigger value="products">
-                Products
-              </TabsTrigger>
+              <TabsTrigger value="products">Products</TabsTrigger>
 
-              <TabsTrigger value="knowledge">
-                Knowledge Hub
-              </TabsTrigger>
+              <TabsTrigger value="knowledge">Knowledge Hub</TabsTrigger>
 
-              <TabsTrigger value="orders">
-                Orders
-              </TabsTrigger>
+              <TabsTrigger value="orders">Orders</TabsTrigger>
 
-              <TabsTrigger value="contacts">
-                Contacts
-              </TabsTrigger>
+              <TabsTrigger value="contacts">Contacts</TabsTrigger>
 
               <TabsTrigger
                 value="logout"
@@ -419,9 +359,7 @@ function Dashboard() {
               <Card className="overflow-hidden">
                 <div className="flex items-center justify-between border-b p-6">
                   <div>
-                    <h3 className="text-lg font-bold">
-                      All Services
-                    </h3>
+                    <h3 className="text-lg font-bold">All Services</h3>
 
                     <p className="mt-1 text-sm text-muted-foreground">
                       {services.length} total services
@@ -456,9 +394,7 @@ function Dashboard() {
                         <TableHead>Title</TableHead>
                         <TableHead>Category</TableHead>
                         <TableHead>Description</TableHead>
-                        <TableHead className="text-right">
-                          Actions
-                        </TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
 
@@ -475,13 +411,9 @@ function Dashboard() {
                       ) : (
                         paginatedServices.map((service) => (
                           <TableRow key={service.id}>
-                            <TableCell className="font-medium">
-                              {service.service_name}
-                            </TableCell>
+                            <TableCell className="font-medium">{service.service_name}</TableCell>
 
-                            <TableCell>
-                              {service.pillar_title || "—"}
-                            </TableCell>
+                            <TableCell>{service.pillar_title || "—"}</TableCell>
 
                             <TableCell className="max-w-md truncate">
                               {service.service_copy || "—"}
@@ -544,9 +476,7 @@ function Dashboard() {
               <Card className="overflow-hidden">
                 <div className="flex items-center justify-between border-b p-6">
                   <div>
-                    <h3 className="text-lg font-bold">
-                      All Knowledge Articles
-                    </h3>
+                    <h3 className="text-lg font-bold">All Knowledge Articles</h3>
 
                     <p className="mt-1 text-sm text-muted-foreground">
                       {articles.length} total articles
@@ -579,9 +509,7 @@ function Dashboard() {
                         <TableHead>Title</TableHead>
                         <TableHead>Category</TableHead>
                         <TableHead>Created</TableHead>
-                        <TableHead className="text-right">
-                          Actions
-                        </TableHead>
+                        <TableHead className="text-right">Actions</TableHead>
                       </TableRow>
                     </TableHeader>
 
@@ -598,19 +526,13 @@ function Dashboard() {
                       ) : (
                         paginatedArticles.map((article) => (
                           <TableRow key={article.id}>
-                            <TableCell className="font-medium">
-                              {article.title}
-                            </TableCell>
+                            <TableCell className="font-medium">{article.title}</TableCell>
 
-                            <TableCell>
-                              {article.category || "—"}
-                            </TableCell>
+                            <TableCell>{article.category || "—"}</TableCell>
 
                             <TableCell>
                               {article.created_at
-                                ? new Date(
-                                  article.created_at
-                                ).toLocaleDateString()
+                                ? new Date(article.created_at).toLocaleDateString()
                                 : "—"}
                             </TableCell>
 
@@ -737,7 +659,9 @@ function Dashboard() {
                             <TableCell className="font-medium">{contact.name}</TableCell>
                             <TableCell>{contact.email}</TableCell>
                             <TableCell>{contact.subject}</TableCell>
-                            <TableCell>{new Date(contact.created_at).toLocaleDateString()}</TableCell>
+                            <TableCell>
+                              {new Date(contact.created_at).toLocaleDateString()}
+                            </TableCell>
                           </TableRow>
                         ))
                       )}
@@ -765,7 +689,6 @@ function Dashboard() {
         />
       )}
     </div>
-
   );
 }
 
@@ -787,10 +710,7 @@ function Pagination({
   const start = (page - 1) * pageSize + 1;
   const end = Math.min(page * pageSize, totalItems);
 
-  const pages = Array.from(
-    { length: totalPages },
-    (_, index) => index + 1
-  );
+  const pages = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   return (
     <div className="flex flex-col gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -840,12 +760,8 @@ function AdminEditModal({
 }: {
   editing: EditingItem;
   onClose: () => void;
-  onServiceSubmit: (
-    e: React.FormEvent<HTMLFormElement>
-  ) => void;
-  onArticleSubmit: (
-    e: React.FormEvent<HTMLFormElement>
-  ) => void;
+  onServiceSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onArticleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
 }) {
   const isService = editing.type === "service";
   const data = editing.data || {};
@@ -895,14 +811,9 @@ function AdminEditModal({
 
         {/* Service Form */}
         {isService ? (
-          <form
-            onSubmit={onServiceSubmit}
-            className="space-y-5 p-6"
-          >
+          <form onSubmit={onServiceSubmit} className="space-y-5 p-6">
             <div className="space-y-2">
-              <Label htmlFor="pillar-title">
-                Pillar Title
-              </Label>
+              <Label htmlFor="pillar-title">Pillar Title</Label>
 
               <Input
                 id="pillar-title"
@@ -915,9 +826,7 @@ function AdminEditModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pillar-slug">
-                Pillar Slug
-              </Label>
+              <Label htmlFor="pillar-slug">Pillar Slug</Label>
 
               <Input
                 id="pillar-slug"
@@ -929,9 +838,7 @@ function AdminEditModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pillar-intro">
-                Pillar Introduction
-              </Label>
+              <Label htmlFor="pillar-intro">Pillar Introduction</Label>
 
               <Textarea
                 id="pillar-intro"
@@ -943,9 +850,7 @@ function AdminEditModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service-name">
-                Service Name
-              </Label>
+              <Label htmlFor="service-name">Service Name</Label>
 
               <Input
                 id="service-name"
@@ -957,9 +862,7 @@ function AdminEditModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service-copy">
-                Service Description
-              </Label>
+              <Label htmlFor="service-copy">Service Description</Label>
 
               <Textarea
                 id="service-copy"
@@ -971,9 +874,7 @@ function AdminEditModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="service-sort-order">
-                Sort Order
-              </Label>
+              <Label htmlFor="service-sort-order">Sort Order</Label>
 
               <Input
                 id="service-sort-order"
@@ -985,11 +886,7 @@ function AdminEditModal({
             </div>
 
             <div className="flex justify-end gap-3 border-t pt-5">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-              >
+              <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
 
@@ -1000,14 +897,9 @@ function AdminEditModal({
           </form>
         ) : (
           /* Knowledge Article Form */
-          <form
-            onSubmit={onArticleSubmit}
-            className="space-y-5 p-6"
-          >
+          <form onSubmit={onArticleSubmit} className="space-y-5 p-6">
             <div className="space-y-2">
-              <Label htmlFor="article-title">
-                Title
-              </Label>
+              <Label htmlFor="article-title">Title</Label>
 
               <Input
                 id="article-title"
@@ -1020,9 +912,7 @@ function AdminEditModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="article-category">
-                Category
-              </Label>
+              <Label htmlFor="article-category">Category</Label>
 
               <Input
                 id="article-category"
@@ -1033,9 +923,7 @@ function AdminEditModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="article-content">
-                Content
-              </Label>
+              <Label htmlFor="article-content">Content</Label>
 
               <Textarea
                 id="article-content"
@@ -1047,9 +935,7 @@ function AdminEditModal({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="article-excerpt">
-                Excerpt
-              </Label>
+              <Label htmlFor="article-excerpt">Excerpt</Label>
 
               <Textarea
                 id="article-excerpt"
@@ -1061,9 +947,7 @@ function AdminEditModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="article-read-time">
-                Read Time
-              </Label>
+              <Label htmlFor="article-read-time">Read Time</Label>
 
               <Input
                 id="article-read-time"
@@ -1074,18 +958,12 @@ function AdminEditModal({
             </div>
 
             <div className="flex justify-end gap-3 border-t pt-5">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onClose}
-              >
+              <Button type="button" variant="outline" onClick={onClose}>
                 Cancel
               </Button>
 
               <Button type="submit" variant="gold">
-                {editing.id
-                  ? "Update Article"
-                  : "Add Article"}
+                {editing.id ? "Update Article" : "Add Article"}
               </Button>
             </div>
           </form>

@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { PRODUCTS, type Product } from "./catalog";
 
 export type CartLine = { id: string; qty: number };
@@ -47,11 +55,16 @@ export function QuoteCartProvider({ children }: { children: ReactNode }) {
 
   const setQty = useCallback((id: string, qty: number) => {
     setLines((prev) =>
-      qty <= 0 ? prev.filter((l) => l.id !== id) : prev.map((l) => (l.id === id ? { ...l, qty } : l)),
+      qty <= 0
+        ? prev.filter((l) => l.id !== id)
+        : prev.map((l) => (l.id === id ? { ...l, qty } : l)),
     );
   }, []);
 
-  const remove = useCallback((id: string) => setLines((prev) => prev.filter((l) => l.id !== id)), []);
+  const remove = useCallback(
+    (id: string) => setLines((prev) => prev.filter((l) => l.id !== id)),
+    [],
+  );
   const clear = useCallback(() => setLines([]), []);
 
   const detailed = useMemo(

@@ -88,7 +88,8 @@ export const PRODUCTS: Product[] = [
     origin: "Turkana Pastoralist Network",
     grade: "Inspected",
     lead: "3–5 days",
-    blurb: "Veterinary-inspected small stock sourced through mobile pastoralist aggregation points.",
+    blurb:
+      "Veterinary-inspected small stock sourced through mobile pastoralist aggregation points.",
     spec: ["Vet certificate", "Cold chain 0–4°C", "Halal slaughter", "Lot traceability"],
   },
   {

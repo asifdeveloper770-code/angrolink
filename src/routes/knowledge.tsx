@@ -1,4 +1,4 @@
-import { useMemo, useState , useEffect} from "react";
+import { useMemo, useState, useEffect } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Search, CalendarDays, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/Reveal";
 import { DataPixels } from "@/components/site/DataPixels";
 import { cn } from "@/lib/utils";
-import { getKnowledgeHub } from "@/lib/supabase";
+import { getKnowledgeHub, type KnowledgeHubArticle } from "@/lib/supabase";
 
 export const Route = createFileRoute("/knowledge")({
   head: () => ({
@@ -30,43 +30,91 @@ export const Route = createFileRoute("/knowledge")({
 
 const TAGS = ["All", "Crop Reports", "Market Pricing", "Sustainability", "Community Impact"];
 
+const DEFAULT_POSTS: KnowledgeHubArticle[] = [
+  {
+    id: "kb-1",
+    title: "East African Corridor 2026: Arid-Land Crop Aggregation & Yield Trends",
+    content:
+      "A comprehensive review of smallholder crop yields, sorghum resilience, and irrigated pulses performance across Kenya and South Sudan corridors.",
+    category: "Crop Reports",
+    excerpt:
+      "Detailed analysis of sorghum, green grams, and sesame yields across northern Kenya and southern border routes.",
+    read_time: "5 min read",
+    created_at: "2026-03-15T08:00:00Z",
+  },
+  {
+    id: "kb-2",
+    title: "Weekly Market Pricing Intelligence: Cereals, Pulses & Oilseeds",
+    content:
+      "Cross-border wholesale benchmark pricing comparing farm-gate aggregation rates in Kakuma and Lodwar with regional demand centers in Kitale, Eldoret, and Juba.",
+    category: "Market Pricing",
+    excerpt:
+      "Weekly commodity price index for white sorghum, ndengu, field tomatoes, and export sesame.",
+    read_time: "3 min read",
+    created_at: "2026-03-12T08:00:00Z",
+  },
+  {
+    id: "kb-3",
+    title: "Decentralized Solar Cold Storage: Reducing Post-Harvest Losses by 30%",
+    content:
+      "Operational findings from deploying 100% solar-powered refrigeration units at village aggregation hubs to prevent horticultural decay and distress selling.",
+    category: "Sustainability",
+    excerpt:
+      "Field engineering metrics demonstrating how cold-chain preservation safeguards farmer revenue and regional food security.",
+    read_time: "7 min read",
+    created_at: "2026-03-08T08:00:00Z",
+  },
+  {
+    id: "kb-4",
+    title: "Host & Refugee Integration: Building Resilient Farming Cooperatives",
+    content:
+      "Case studies from the Kalobeyei and Kakuma irrigation clusters showing how cooperative farming structures empower both displaced families and local landowners.",
+    category: "Community Impact",
+    excerpt:
+      "How blended producer groups foster economic stability and mutual prosperity through guaranteed market off-take.",
+    read_time: "6 min read",
+    created_at: "2026-03-01T08:00:00Z",
+  },
+];
 
 function Knowledge() {
   const [query, setQuery] = useState("");
   const [tag, setTag] = useState("All");
 
-  const [posts, setPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<KnowledgeHubArticle[]>(DEFAULT_POSTS);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadPosts();
   }, []);
 
   async function loadPosts() {
-    setLoading(true);
-
     try {
-      const result = await getKnowledgeHub();
+      const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"];
+      const isConfigured = Boolean(supabaseUrl) && !supabaseUrl.includes("placeholder-project");
 
-      if (!result.success) {
-        console.error("Failed to load knowledge hub:", result.error);
-        setPosts([]);
+      if (!isConfigured) {
+        setPosts(DEFAULT_POSTS);
         return;
       }
 
-      setPosts(result.data || []);
-    } catch (error) {
-      console.error("Failed to load knowledge hub:", error);
-      setPosts([]);
+      const result = await getKnowledgeHub();
+
+      if (!result.success || !result.data || result.data.length === 0) {
+        setPosts(DEFAULT_POSTS);
+        return;
+      }
+
+      setPosts(result.data);
+    } catch {
+      setPosts(DEFAULT_POSTS);
     } finally {
       setLoading(false);
     }
   }
 
   const tags = useMemo(() => {
-    const categories = posts
-      .map((post) => post.category)
-      .filter(Boolean);
+    const categories = posts.map((post) => post.category).filter(Boolean);
 
     return ["All", ...Array.from(new Set(categories))];
   }, [posts]);
@@ -81,12 +129,7 @@ function Knowledge() {
 
       return (
         (tag === "All" || p.category === tag) &&
-        (
-          q === "" ||
-          title.includes(q) ||
-          excerpt.includes(q) ||
-          content.includes(q)
-        )
+        (q === "" || title.includes(q) || excerpt.includes(q) || content.includes(q))
       );
     });
   }, [posts, query, tag]);
@@ -103,8 +146,8 @@ function Knowledge() {
             </h1>
 
             <p className="mt-6 max-w-2xl text-primary-foreground/80">
-              Crop reports, market pricing updates, sustainability research
-              and stories from the communities we operate alongside.
+              Crop reports, market pricing updates, sustainability research and stories from the
+              communities we operate alongside.
             </p>
           </Reveal>
         </div>
@@ -147,9 +190,7 @@ function Knowledge() {
         </Reveal>
 
         {loading ? (
-          <div className="mt-16 text-center text-muted-foreground">
-            Loading publications...
-          </div>
+          <div className="mt-16 text-center text-muted-foreground">Loading publications...</div>
         ) : filtered.length === 0 ? (
           <p className="mt-16 text-center text-muted-foreground">
             No publications match that search. Try a different term or filter.
@@ -157,18 +198,13 @@ function Knowledge() {
         ) : (
           <div className="mt-10 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {filtered.map((p, i) => (
-              <Reveal
-                key={p.id}
-                delay={(i % 3) * 80}
-              >
+              <Reveal key={p.id} delay={(i % 3) * 80}>
                 <article className="lift group flex h-full flex-col rounded-xl border border-border bg-card p-7 hover:border-accent">
                   <span className="w-fit rounded-full bg-secondary px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-secondary-foreground">
                     {p.category || "General"}
                   </span>
 
-                  <h2 className="mt-4 text-lg font-bold leading-snug">
-                    {p.title}
-                  </h2>
+                  <h2 className="mt-4 text-lg font-bold leading-snug">{p.title}</h2>
 
                   <p className="mt-3 flex-1 text-sm text-muted-foreground">
                     {p.excerpt || p.content || ""}
@@ -199,13 +235,10 @@ function Knowledge() {
 
         <Reveal delay={150}>
           <div className="mt-14 rounded-2xl border border-border bg-secondary/50 p-8 text-center">
-            <h2 className="text-2xl font-extrabold uppercase">
-              Subscribe to the weekly brief
-            </h2>
+            <h2 className="text-2xl font-extrabold uppercase">Subscribe to the weekly brief</h2>
 
             <p className="mx-auto mt-3 max-w-lg text-sm text-muted-foreground">
-              Commodity pricing, corridor status and fragility signals
-              delivered every Monday.
+              Commodity pricing, corridor status and fragility signals delivered every Monday.
             </p>
 
             <form
@@ -219,11 +252,7 @@ function Knowledge() {
                 aria-label="Email"
               />
 
-              <Button
-                type="submit"
-                variant="gold"
-                className="shrink-0"
-              >
+              <Button type="submit" variant="gold" className="shrink-0">
                 Subscribe
               </Button>
             </form>

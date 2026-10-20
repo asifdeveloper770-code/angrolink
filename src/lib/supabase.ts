@@ -1,7 +1,8 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env['VITE_SUPABASE_URL'] || '';
-const supabaseAnonKey = import.meta.env['VITE_SUPABASE_ANON_KEY'] || '';
+const supabaseUrl =
+  import.meta.env["VITE_SUPABASE_URL"] || "https://placeholder-project.supabase.co";
+const supabaseAnonKey = import.meta.env["VITE_SUPABASE_ANON_KEY"] || "placeholder-anon-key";
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
@@ -29,34 +30,28 @@ export interface CheckoutOrder {
   created_at?: string;
   status?: string;
 }
-  
+
 // Supabase operations
 export async function submitContactForm(data: ContactSubmission) {
   try {
-    const { data: result, error } = await supabase
-      .from('contacts')
-      .insert([data])
-      .select();
+    const { data: result, error } = await supabase.from("contacts").insert([data]).select();
 
     if (error) throw error;
     return { success: true, data: result };
   } catch (error) {
-    console.error('Error submitting contact form:', error);
+    console.error("Error submitting contact form:", error);
     return { success: false, error };
   }
 }
 
 export async function submitCheckoutOrder(data: CheckoutOrder) {
   try {
-    const { data: result, error } = await supabase
-      .from('orders')
-      .insert([data])
-      .select();
+    const { data: result, error } = await supabase.from("orders").insert([data]).select();
 
     if (error) throw error;
     return { success: true, data: result };
   } catch (error) {
-    console.error('Error submitting checkout order:', error);
+    console.error("Error submitting checkout order:", error);
     return { success: false, error };
   }
 }
@@ -75,71 +70,74 @@ export interface ServiceEntry {
 }
 
 export async function getServices() {
-  const { data, error } = await supabase
-    .from("services")
-    .select("*")
-    .eq("active", true)
-    .order("pillar_slug", { ascending: true })
-    .order("sort_order", { ascending: true });
+  try {
+    const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"];
+    const isConfigured = Boolean(supabaseUrl) && !supabaseUrl.includes("placeholder-project");
+    if (!isConfigured) {
+      return { success: false, data: [], error: null };
+    }
 
-  if (error) {
-    console.error("getServices error:", error);
+    const { data, error } = await supabase
+      .from("services")
+      .select("*")
+      .eq("active", true)
+      .order("pillar_slug", { ascending: true })
+      .order("sort_order", { ascending: true });
+
+    if (error) {
+      return {
+        success: false,
+        data: [],
+        error,
+      };
+    }
+
+    return {
+      success: true,
+      data: data as ServiceEntry[],
+      error: null,
+    };
+  } catch (error) {
     return {
       success: false,
       data: [],
       error,
     };
   }
-
-  return {
-    success: true,
-    data: data as ServiceEntry[],
-    error: null,
-  };
 }
 
 export async function addService(service: ServiceEntry) {
   try {
-    const { data, error } = await supabase
-      .from('services')
-      .insert([service])
-      .select();
+    const { data, error } = await supabase.from("services").insert([service]).select();
 
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
-    console.error('Error adding service:', error);
+    console.error("Error adding service:", error);
     return { success: false, error };
   }
 }
 
 export async function updateService(id: string, service: Partial<ServiceEntry>) {
   try {
-    const { data, error } = await supabase
-      .from('services')
-      .update(service)
-      .eq('id', id)
-      .select();
+    const { data, error } = await supabase.from("services").update(service).eq("id", id).select();
 
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
-    console.error('Error updating service:', error);
+    console.error("Error updating service:", error);
     return { success: false, error };
   }
 }
 
 export async function deleteService(id: string) {
   try {
-    const { error } = await supabase
-      .from('services')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from("services").delete().eq("id", id);
 
     if (error) throw error;
     return { success: true };
   } catch (error) {
-    console.error('Error deleting service:', error);
+    console.error("Error deleting service:", error);
     return { success: false, error };
   }
 }
@@ -156,39 +154,48 @@ export interface KnowledgeHubArticle {
 }
 
 export async function getKnowledgeHub() {
-  const { data, error } = await supabase
-    .from("knowledge_hub")
-    .select("*")
-    .order("created_at", { ascending: false });
+  try {
+    const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"];
+    const isConfigured = Boolean(supabaseUrl) && !supabaseUrl.includes("placeholder-project");
+    if (!isConfigured) {
+      return { success: false, data: [], error: null };
+    }
 
-  if (error) {
-    console.error("getKnowledgeHub error:", error);
+    const { data, error } = await supabase
+      .from("knowledge_hub")
+      .select("*")
+      .order("created_at", { ascending: false });
 
+    if (error) {
+      return {
+        success: false,
+        data: [],
+        error,
+      };
+    }
+
+    return {
+      success: true,
+      data: data as KnowledgeHubArticle[],
+      error: null,
+    };
+  } catch (error) {
     return {
       success: false,
       data: [],
       error,
     };
   }
-
-  return {
-    success: true,
-    data: data as KnowledgeHubArticle[],
-    error: null,
-  };
 }
 
 export async function addKnowledgeArticle(article: KnowledgeHubArticle) {
   try {
-    const { data, error } = await supabase
-      .from('knowledge_hub')
-      .insert([article])
-      .select();
+    const { data, error } = await supabase.from("knowledge_hub").insert([article]).select();
 
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
-    console.error('Error adding knowledge article:', error);
+    console.error("Error adding knowledge article:", error);
     return { success: false, error };
   }
 }
@@ -196,14 +203,14 @@ export async function addKnowledgeArticle(article: KnowledgeHubArticle) {
 export async function getOrders() {
   try {
     const { data, error } = await supabase
-      .from('orders')
-      .select('*')
-      .order('created_at', { ascending: false });
+      .from("orders")
+      .select("*")
+      .order("created_at", { ascending: false });
 
     if (error) throw error;
     return { success: true, data };
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error("Error fetching orders:", error);
     return { success: false, error };
   }
 }
@@ -238,10 +245,7 @@ export async function getContacts() {
     };
   }
 }
-export async function updateKnowledgeArticle(
-  id: string,
-  article: KnowledgeHubArticle
-) {
+export async function updateKnowledgeArticle(id: string, article: KnowledgeHubArticle) {
   const { data, error } = await supabase
     .from("knowledge_hub")
     .update({
@@ -272,10 +276,7 @@ export async function updateKnowledgeArticle(
 }
 
 export async function deleteKnowledgeArticle(id: string) {
-  const { error } = await supabase
-    .from("knowledge_hub")
-    .delete()
-    .eq("id", id);
+  const { error } = await supabase.from("knowledge_hub").delete().eq("id", id);
 
   if (error) {
     console.error("Error deleting knowledge article:", error);

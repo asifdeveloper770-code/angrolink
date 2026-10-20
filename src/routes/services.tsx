@@ -9,17 +9,17 @@ import { DataPixels } from "@/components/site/DataPixels";
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Services & Operational Pillars — AgriLink Kakuma LLC" },
+      { title: "Services & Operational Pillars — AgriLink EA Ltd." },
       {
         name: "description",
         content:
-          "Agricultural aggregation, end-to-end cold-chain logistics and market intelligence services across Turkana County trade corridors.",
+          "Agricultural inputs, aggregation, solar cold-chain logistics and market intelligence services across Kenya and South Sudan trade corridors.",
       },
-      { property: "og:title", content: "Services & Operational Pillars — AgriLink Kakuma" },
+      { property: "og:title", content: "Services & Operational Pillars — AgriLink EA Ltd." },
       {
         property: "og:description",
         content:
-          "Crop consolidation, quality grading, solar cold storage, cross-border freight and real-time commodity intelligence.",
+          "Input distribution, quality grading, solar cold storage, digital marketplace and real-time commodity intelligence.",
       },
     ],
   }),
@@ -79,13 +79,84 @@ type ServicePillar = {
   }[];
 };
 
+const DEFAULT_PILLARS: ServicePillar[] = [
+  {
+    slug: "agricultural-aggregation",
+    title: "Agricultural Aggregation",
+    intro:
+      "Consolidating smallholder harvests across rural East Africa into graded, contract-ready commercial volumes.",
+    services: [
+      {
+        name: "Producer Network Mobilization",
+        copy: "Organizing smallholders into structured production groups with transparent quality standards.",
+      },
+      {
+        name: "Decentralized Sorting & Quality Grading",
+        copy: "Rigorous sorting, moisture testing, and certified grading at farm-gate trade yards.",
+      },
+      {
+        name: "Direct Input Provision",
+        copy: "Supplying certified seeds, soil nutrients, and modern tools directly to farming cooperatives.",
+      },
+    ],
+  },
+  {
+    slug: "end-to-end-logistics",
+    title: "End-to-End Cold-Chain Logistics",
+    intro:
+      "Preserving harvest freshness and transporting commodities across regional trade corridors.",
+    services: [
+      {
+        name: "Solar-Powered Cold Storage",
+        copy: "Decentralized solar cooling units that cut post-harvest losses by 30% right at the farm gate.",
+      },
+      {
+        name: "Scheduled Regional Freight",
+        copy: "Temperature-monitored fleet routes moving commodities across Kenya, South Sudan, and border hubs.",
+      },
+      {
+        name: "B2B Fulfillment & Bulk Off-Take",
+        copy: "Direct deliveries to institutional buyers, food processors, supermarkets, and wholesale markets.",
+      },
+    ],
+  },
+  {
+    slug: "market-intelligence",
+    title: "Market Intelligence & Digital Marketplace",
+    intro:
+      "Connecting producers directly to market demand signals, fair pricing, and commercial contracts.",
+    services: [
+      {
+        name: "Live Commodity Pricing",
+        copy: "Daily price discovery across East African wholesale markets ensuring fair producer margins.",
+      },
+      {
+        name: "Integrated Digital Marketplace",
+        copy: "Real-time crop inventory matching smallholders to commercial B2B procurement tenders.",
+      },
+      {
+        name: "Corridor Fragility & Risk Forecasting",
+        copy: "Predictive supply-chain insights tracking weather variability, fuel prices, and transit windows.",
+      },
+    ],
+  },
+];
+
 function Services() {
-  const [pillars, setPillars] = useState<ServicePillar[]>([]);
-  const [loadingServices, setLoadingServices] = useState(true);
-  
+  const [pillars, setPillars] = useState<ServicePillar[]>(DEFAULT_PILLARS);
+  const [loadingServices, setLoadingServices] = useState(false);
+
   useEffect(() => {
     async function loadServices() {
       try {
+        const supabaseUrl = import.meta.env["VITE_SUPABASE_URL"];
+        const isConfigured = Boolean(supabaseUrl) && !supabaseUrl.includes("placeholder-project");
+
+        if (!isConfigured) {
+          setPillars(DEFAULT_PILLARS);
+          return;
+        }
+
         const { data, error } = await supabase
           .from("services")
           .select("*")
@@ -93,16 +164,15 @@ function Services() {
           .order("pillar_slug", { ascending: true })
           .order("sort_order", { ascending: true });
 
-        if (error) {
-          throw error;
+        if (error || !data || data.length === 0) {
+          setPillars(DEFAULT_PILLARS);
+          return;
         }
 
-        const rows = (data ?? []) as ServiceRow[];
+        const rows = data as ServiceRow[];
 
         const grouped = rows.reduce<ServicePillar[]>((acc, row) => {
-          let pillar = acc.find(
-            (item) => item.slug === row.pillar_slug
-          );
+          let pillar = acc.find((item) => item.slug === row.pillar_slug);
 
           if (!pillar) {
             pillar = {
@@ -123,10 +193,9 @@ function Services() {
           return acc;
         }, []);
 
-        setPillars(grouped);
-      } catch (error) {
-        console.error("Error loading services:", error);
-        setPillars([]);
+        setPillars(grouped.length > 0 ? grouped : DEFAULT_PILLARS);
+      } catch {
+        setPillars(DEFAULT_PILLARS);
       } finally {
         setLoadingServices(false);
       }
@@ -134,7 +203,7 @@ function Services() {
 
     loadServices();
   }, []);
-  
+
   return (
     <>
       <section className="relative isolate overflow-hidden surface-forest">
@@ -154,19 +223,12 @@ function Services() {
 
       <section className="mx-auto max-w-7xl space-y-16 px-4 py-20 sm:px-6 lg:px-8">
         {loadingServices ? (
-          <div className="py-12 text-center text-muted-foreground">
-            Loading services...
-          </div>
+          <div className="py-12 text-center text-muted-foreground">Loading services...</div>
         ) : pillars.length === 0 ? (
-          <div className="py-12 text-center text-muted-foreground">
-            No services available.
-          </div>
+          <div className="py-12 text-center text-muted-foreground">No services available.</div>
         ) : (
           pillars.map((pillar, pi) => {
-            const Icon =
-              PILLAR_ICONS[
-              pillar.slug as keyof typeof PILLAR_ICONS
-              ] ?? Users;
+            const Icon = PILLAR_ICONS[pillar.slug as keyof typeof PILLAR_ICONS] ?? Users;
 
             return (
               <Reveal key={pillar.slug} as="section">
@@ -186,26 +248,17 @@ function Services() {
                   </div>
                 </div>
 
-                <p className="mt-4 max-w-2xl text-muted-foreground">
-                  {pillar.intro}
-                </p>
+                <p className="mt-4 max-w-2xl text-muted-foreground">{pillar.intro}</p>
 
                 <div className="mt-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
                   {pillar.services.map((service, i) => (
-                    <Reveal
-                      key={service.name}
-                      delay={i * 70}
-                    >
+                    <Reveal key={service.name} delay={i * 70}>
                       <article className="lift group h-full rounded-xl border border-border bg-card p-6 hover:border-accent">
                         <span className="block h-1 w-10 rounded-full bg-gold transition-all duration-300 group-hover:w-16" />
 
-                        <h3 className="mt-5 font-bold leading-snug">
-                          {service.name}
-                        </h3>
+                        <h3 className="mt-5 font-bold leading-snug">{service.name}</h3>
 
-                        <p className="mt-3 text-sm text-muted-foreground">
-                          {service.copy}
-                        </p>
+                        <p className="mt-3 text-sm text-muted-foreground">{service.copy}</p>
                       </article>
                     </Reveal>
                   ))}
@@ -229,10 +282,20 @@ function Services() {
           <div className="mt-10 grid gap-8 lg:grid-cols-[1.5fr_1fr]">
             <Reveal>
               <div className="overflow-hidden rounded-xl border border-border bg-card p-4">
-                <svg viewBox="0 0 100 100" className="h-auto w-full" role="img" aria-label="Map of Turkana County trade corridors">
+                <svg
+                  viewBox="0 0 100 100"
+                  className="h-auto w-full"
+                  role="img"
+                  aria-label="Map of Turkana County trade corridors"
+                >
                   <defs>
                     <pattern id="grid" width="5" height="5" patternUnits="userSpaceOnUse">
-                      <path d="M5 0 L0 0 0 5" fill="none" stroke="var(--color-border)" strokeWidth="0.2" />
+                      <path
+                        d="M5 0 L0 0 0 5"
+                        fill="none"
+                        stroke="var(--color-border)"
+                        strokeWidth="0.2"
+                      />
                     </pattern>
                   </defs>
                   <rect width="100" height="100" fill="url(#grid)" />

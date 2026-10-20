@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Mail, Phone, MapPin } from "lucide-react";
-import logoAsset from "@/assets/agrilink-logo.jpeg";
+import logoAsset from "@/assets/agrilogo.png";
 
 export function Footer() {
   return (
@@ -10,16 +10,17 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <img
               src={logoAsset}
-              alt="AgriLink Kakuma LLC logo"
+              alt="AgriLink EA Ltd. logo"
               width={48}
               height={48}
-              className="h-12 w-12 shrink-0 rounded-full object-cover ring-1 ring-primary-foreground/25"
+              referrerPolicy="no-referrer"
+              className="h-12 w-12 shrink-0 rounded-full object-cover ring-2 ring-gold/60 bg-white"
             />
-            <span className="font-display text-lg font-extrabold uppercase">AgriLink Kakuma</span>
+            <span className="font-display text-lg font-extrabold uppercase">AgriLink EA Ltd.</span>
           </div>
           <p className="mt-4 max-w-xs text-sm text-primary-foreground/75">
-            An agtech, logistics and market-intelligence social enterprise building resilient food
-            corridors across Turkana County, Kenya.
+            An agtech, logistics and market-intelligence enterprise empowering East African
+            agriculture and building resilient food corridors across Kenya and South Sudan.
           </p>
         </div>
 
@@ -104,8 +105,8 @@ export function Footer() {
 
       <div className="border-t border-primary-foreground/15">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-primary-foreground/65 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-          <p>© {new Date().getFullYear()} AgriLink Kakuma LLC. All rights reserved.</p>
-          <p>Registered social enterprise · Turkana County, Kenya · New York, New York, USA</p>
+          <p>© {new Date().getFullYear()} AgriLink EA Ltd. All rights reserved.</p>
+          <p>Registered social enterprise · Kenya · South Sudan · New York, USA</p>
         </div>
       </div>
     </footer>

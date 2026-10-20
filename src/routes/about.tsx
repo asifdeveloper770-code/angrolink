@@ -7,17 +7,17 @@ import { DataPixels } from "@/components/site/DataPixels";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About & Our Impact — AgriLink Kakuma LLC" },
+      { title: "About AgriLink EA Ltd. — Empowering East African Agriculture" },
       {
         name: "description",
         content:
-          "Our founding story, climate-smart agricultural framework, leadership team and downloadable impact reports from Turkana County, Kenya.",
+          "Welcome to AgriLink EA Ltd: transforming farming into a powerful engine for community development and economic resilience across Kenya and South Sudan.",
       },
-      { property: "og:title", content: "About & Our Impact — AgriLink Kakuma" },
+      { property: "og:title", content: "About AgriLink EA Ltd." },
       {
         property: "og:description",
         content:
-          "Institutional trust, environmental resilience and a climate-smart framework for arid-land food systems.",
+          "Transforming farming into an engine for community development, reducing post-harvest losses by 30% across Kenya and South Sudan.",
       },
     ],
   }),
@@ -77,12 +77,21 @@ function About() {
         <DataPixels tone="light" />
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
           <Reveal>
+            <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3.5 py-1 text-xs sm:text-sm font-bold text-gold backdrop-blur-sm mb-4">
+              <span>Empowering East African Agriculture 🌍✨</span>
+            </div>
             <h1 className="max-w-4xl font-display text-[clamp(2.1rem,5.5vw,3.8rem)] font-extrabold uppercase leading-[1] text-balance-tight">
-              Building institutional trust in the world's toughest markets
+              About AgriLink EA Ltd.
             </h1>
-            <p className="mt-6 max-w-2xl text-primary-foreground/80">
-              AgriLink Kakuma LLC exists because arid-land producers are not short of harvest — they
-              are short of infrastructure, information and buyers who will show up.
+            <p className="mt-6 max-w-3xl text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
+              Welcome to AgriLink EA Ltd, where we transform farming into a powerful engine for
+              community development and economic resilience across East Africa. Scaling our impact
+              far beyond arid regions, our footprint extends across the agricultural landscapes of
+              Kenya and South Sudan. We are dedicated to empowering smallholder farmers by
+              delivering high-quality agricultural inputs and connecting them directly to reliable
+              B2B buyers through our integrated digital marketplace. Backed by advanced cold-storage
+              facilities, we actively protect regional food security and reduce post-harvest losses
+              by 30%, turning sustainable farming into lasting prosperity.
             </p>
           </Reveal>
         </div>
@@ -91,24 +100,47 @@ function About() {
       <section className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr]">
           <Reveal>
-            <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">Founding story</p>
-            <h2 className="mt-3 text-3xl font-extrabold uppercase">From a single truck to a corridor</h2>
-            <div className="mt-6 space-y-4 text-muted-foreground">
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-accent">
+              Our Journey & Purpose
+            </p>
+            <h2 className="mt-3 text-3xl font-extrabold uppercase">
+              Our Story: From Kakuma to East Africa 🌾✨
+            </h2>
+            <div className="mt-6 space-y-4 text-base leading-relaxed text-muted-foreground">
               <p>
-                In 2019 a group of agronomists, refugee-host community traders and logistics
-                operators pooled resources to move eleven tons of sorghum out of Kakuma before it
-                spoiled. The harvest reached Kitale. The lesson stayed: the constraint was never
-                production, it was the missing middle between farm gate and formal buyer.
+                At AgriLink EA Ltd, our journey began right at the frontiers of displacement, where
+                the critical intersection of environmental volatility and structural fragility
+                demands more than traditional humanitarian relief. Founded in the Kakuma region, our
+                social enterprise was built on a simple yet transformative premise: farming should
+                be used as a powerful engine for community development, rather than just an end in
+                itself.
               </p>
               <p>
-                Six years later AgriLink Kakuma operates graded aggregation yards, solar-powered cold
-                storage, a vetted transporter network and a market intelligence desk that publishes
-                weekly commodity signals used by county officials, NGOs and commercial off-takers.
+                Our founder’s deep experience managing large-scale humanitarian programs within the
+                UNHCR network exposed a critical systemic gap on the geographic periphery. While
+                rural smallholders and displaced communities possessed the determination to
+                cultivate land, they were systematically cut off from stable markets, devastated by
+                climate shocks, and crippled by post-harvest decay.
               </p>
               <p>
-                We are structured as a social enterprise: commercial discipline, transparent margin
-                sharing with producer groups, and reporting rigour that satisfies institutional
-                funders and audit committees alike.
+                We set out to build the literal economic plumbing required to stabilize these
+                vulnerable food systems. By introducing a technology-driven model, we began
+                delivering high-quality agricultural inputs directly to farmers, pairing localized
+                resources with modern digital connectivity.
+              </p>
+              <p>
+                Today, AgriLink EA Ltd has scaled from a localized pilot project into a dynamic,
+                regional East African enterprise. Our operations span across the vital agricultural
+                corridors of Kenya and South Sudan, expanding sustainable energy access and creating
+                climate-resilient livelihoods for both rural smallholders and displaced populations.
+              </p>
+              <p>
+                By connecting producers directly to reliable B2B buyers through our integrated
+                digital marketplace, and deploying advanced solar-powered cold storage facilities,
+                we have successfully engineered a system that cuts post-harvest crop losses by 30%.
+                We are proving that even in the most complex state-building environments, robust
+                agricultural infrastructure can cut through geopolitical noise, protect critical
+                national assets, and secure lasting regional peace from the ground up.
               </p>
             </div>
           </Reveal>

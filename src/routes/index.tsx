@@ -15,24 +15,25 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/site/Reveal";
 import { Counter } from "@/components/site/Counter";
 import { DataPixels } from "@/components/site/DataPixels";
-import logoAsset from "@/assets/agrilink-logo.jpeg";
-import heroField from "@/assets/hero-field.jpg";
-
+import logoAsset from "@/assets/agrilogo.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AgriLink Kakuma LLC — Agtech, Logistics & Market Intelligence" },
+      { title: "AgriLink EA Ltd. — Empowering East African Agriculture" },
       {
         name: "description",
         content:
-          "AgriLink Kakuma LLC aggregates smallholder harvests, runs cold-chain logistics and publishes market intelligence across Turkana County, Kenya.",
+          "AgriLink EA Ltd connects farmers directly to reliable B2B buyers through an integrated digital marketplace and deploys solar cold storage to reduce post-harvest losses by 30% across Kenya and South Sudan.",
       },
-      { property: "og:title", content: "AgriLink Kakuma LLC — Resilient Food Corridors in Turkana" },
+      {
+        property: "og:title",
+        content: "AgriLink EA Ltd. — Empowering East African Agriculture",
+      },
       {
         property: "og:description",
         content:
-          "Aggregation, end-to-end logistics and market intelligence for institutional partners, commercial buyers and local producers.",
+          "High-quality inputs, digital marketplace, and solar cold storage infrastructure across Kenya and South Sudan.",
       },
     ],
   }),
@@ -88,7 +89,10 @@ function Home() {
   return (
     <>
       <section className="relative isolate overflow-hidden surface-forest">
-        <div className="pointer-events-none absolute inset-0 grid-mesh text-primary-foreground/70" aria-hidden />
+        <div
+          className="pointer-events-none absolute inset-0 grid-mesh text-primary-foreground/70"
+          aria-hidden
+        />
         <div
           className="pointer-events-none absolute -right-40 -top-40 h-36rem w-36rem rounded-full bg-gold/20 blur-[120px]"
           aria-hidden
@@ -96,88 +100,96 @@ function Home() {
         <DataPixels tone="light" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8 lg:py-32">
           <div className="min-w-0">
-          
-          <Reveal delay={90}>
-            <h1 className="mt-7 font-display text-[clamp(2.6rem,7.4vw,5.6rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.045em] text-balance-tight">
-              AGRI<span className="text-gold">LINK</span>
-              <br />
-              KAKUMA LLC
-            </h1>
-          </Reveal>
-          <Reveal delay={140}>
-            <div className="mt-7 h-px w-24 bg-linear-to-r from-gold to-transparent" aria-hidden />
-          </Reveal>
-          <Reveal delay={160}>
-            <p className="mt-7 max-w-xl text-base leading-relaxed text-primary-foreground/75 sm:text-lg">
-             we connect farmers directly to formal markets. We do this by gathering local harvests, providing reliable cold-chain storage, and sharing the critical market data needed to turn fragile food systems into secure, investable businesses.
-            </p>
-          </Reveal>
-          <Reveal delay={230}>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Button asChild variant="gold" size="lg">
-                <Link to="/investment-partnership">
-                  Partner With Us <ArrowRight />
-                </Link>
-              </Button>
-              <Button asChild variant="secondary" size="lg">
-                <Link to="/shop">
-                  Buy Commodities <ArrowRight />
-                </Link>
-              </Button>
-              <Button asChild variant="outlineLight" size="lg">
-                <Link to="/shop">Request a Quote</Link>
-              </Button>
-            </div>
-          </Reveal>
-          <Reveal delay={300}>
-            <div className="mt-14 grid gap-4 border-t border-primary-foreground/15 pt-8 sm:grid-cols-3">
-              {[
-                { icon: ShieldCheck, label: "Traceable, graded supply" },
-                { icon: Radar, label: "Live corridor monitoring" },
-                { icon: Leaf, label: "Climate-smart sourcing" },
-              ].map((f) => (
-                <div key={f.label} className="flex items-center gap-3 text-sm text-primary-foreground/80">
-                  <f.icon className="h-5 w-5 shrink-0 text-gold" />
-                  <span>{f.label}</span>
-                </div>
-              ))}
-            </div>
-          </Reveal>
+            <Reveal delay={90}>
+              <div className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/15 px-3.5 py-1 text-xs sm:text-sm font-bold text-gold backdrop-blur-sm">
+                <span>Empowering East African Agriculture 🌍✨</span>
+              </div>
+              <h1 className="mt-5 font-display text-[clamp(2.6rem,7.4vw,5.4rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.045em] text-balance-tight">
+                AGRI<span className="text-gold">LINK</span>
+                <br />
+                EA LTD.
+              </h1>
+            </Reveal>
+            <Reveal delay={140}>
+              <div className="mt-6 h-px w-24 bg-linear-to-r from-gold to-transparent" aria-hidden />
+            </Reveal>
+            <Reveal delay={160}>
+              <p className="mt-6 max-w-xl text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
+                AgriLink EA Ltd uses farming as an engine for community development rather than as
+                an end in itself. We provide high-quality agricultural inputs, connect farmers
+                directly to reliable B2B buyers through an integrated digital marketplace, and
+                deploy solar-powered cold storage infrastructure to reduce post-harvest losses by
+                30%, notably across Kenya and South Sudan.
+              </p>
+            </Reveal>
+            <Reveal delay={230}>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Button asChild variant="gold" size="lg">
+                  <Link to="/investment-partnership">
+                    Partner With Us <ArrowRight />
+                  </Link>
+                </Button>
+                <Button asChild variant="secondary" size="lg">
+                  <Link to="/shop">
+                    Buy Commodities <ArrowRight />
+                  </Link>
+                </Button>
+                <Button asChild variant="outlineLight" size="lg">
+                  <Link to="/shop">Request a Quote</Link>
+                </Button>
+              </div>
+            </Reveal>
+            <Reveal delay={300}>
+              <div className="mt-12 grid gap-4 border-t border-primary-foreground/15 pt-8 sm:grid-cols-3">
+                {[
+                  { icon: ShieldCheck, label: "Quality inputs & grading" },
+                  { icon: Radar, label: "Solar cold storage" },
+                  { icon: Leaf, label: "Kenya & South Sudan hubs" },
+                ].map((f) => (
+                  <div
+                    key={f.label}
+                    className="flex items-center gap-3 text-sm text-primary-foreground/80"
+                  >
+                    <f.icon className="h-5 w-5 shrink-0 text-gold" />
+                    <span>{f.label}</span>
+                  </div>
+                ))}
+              </div>
+            </Reveal>
           </div>
 
           <Reveal delay={140}>
             <div className="relative mx-auto w-full max-w-xl">
-              <div
-                className="absolute -inset-8 rounded-[2rem] bg-gold/10 blur-3xl"
-                aria-hidden
-              />
+              <div className="absolute -inset-8 rounded-[2rem] bg-gold/10 blur-3xl" aria-hidden />
               <figure className="frame-shadow relative overflow-hidden rounded-[1.75rem] border border-primary-foreground/20">
                 <img
-                  src={heroField}
-                  alt="AgriLink Kakuma team loading graded grain sacks onto a logistics truck in Turkana at golden hour"
+                  src="/src/assets/images/hero_green_farm_1792527487427.jpg"
+                  alt="AgriLink EA Ltd - Lush green East African farming landscape with thriving crops and farmers"
                   width={1600}
                   height={1200}
+                  referrerPolicy="no-referrer"
                   fetchPriority="high"
-                  className="aspect-4/3 w-full object-cover sm:aspect-5/4 "
+                  className="aspect-4/3 w-full object-cover sm:aspect-5/4"
                 />
                 <div
-                  className="absolute inset-0 bg-linear-to-r from-primary-deep/90 via-primary-deep/5 to-transparent"
+                  className="absolute inset-0 bg-linear-to-r from-primary-deep/80 via-transparent to-transparent"
                   aria-hidden
                 />
-                <figcaption className="absolute inset-x-0 bottom-0 flex items-center gap-3 p-5 sm:p-6">
+                <figcaption className="absolute inset-x-0 bottom-0 flex items-center gap-3 p-5 sm:p-6 bg-gradient-to-t from-black/85 via-black/40 to-transparent">
                   <img
                     src={logoAsset}
-                    alt="AgriLink Kakuma LLC logo"
+                    alt="AgriLink EA Ltd. logo"
                     width={56}
                     height={56}
-                    className="h-12 w-12 shrink-0 rounded-full bg-background object-cover ring-2 ring-gold/70 sm:h-14 sm:w-14"
+                    referrerPolicy="no-referrer"
+                    className="h-12 w-12 shrink-0 rounded-full bg-white object-cover ring-2 ring-gold/90 sm:h-14 sm:w-14"
                   />
                   <span className="min-w-0">
                     <span className="block text-[11px] font-bold uppercase tracking-[0.24em] text-gold">
-                      Corridor 04 · Kakuma → Lodwar
+                      Corridor 01 · Kenya & South Sudan
                     </span>
-                    <span className="block truncate text-sm text-primary-foreground/85">
-                      Aggregated · graded · cold-chain verified
+                    <span className="block truncate text-sm text-primary-foreground/95">
+                      Empowering East African Agriculture
                     </span>
                   </span>
                 </figcaption>
@@ -205,7 +217,9 @@ function Home() {
                   <s.icon className="h-6 w-6" />
                 </span>
                 <h3 className="mt-6 text-lg font-bold">{s.title}</h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">{s.copy}</p>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-muted-foreground">
+                  {s.copy}
+                </p>
                 <span className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-primary">
                   {s.cta}
                   <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -259,12 +273,195 @@ function Home() {
         </div>
       </section>
 
+      {/* Farm to Commodities Showcase Section */}
+      <section className="relative isolate overflow-hidden bg-background section-y">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <p className="eyebrow">Commodities & Logistics</p>
+            <h2 className="mt-4 max-w-3xl text-3xl font-extrabold uppercase sm:text-4xl">
+              Farm to Commodities: Direct, Graded & Solar-Cooled
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+              We connect smallholder harvests directly to verified B2B buyers with decentralized
+              solar-powered cold storage, high-standard grading, and scheduled regional freight
+              across Kenya and South Sudan.
+            </p>
+          </Reveal>
+
+          <div className="mt-12 grid items-center gap-10 lg:grid-cols-2">
+            <Reveal delay={100}>
+              <div className="relative overflow-hidden rounded-2xl border border-border shadow-elevate">
+                <img
+                  src="/src/assets/images/farm_commodities_1792527487698.jpg"
+                  alt="Farm to commodities - fresh agricultural harvest and solar cold storage hub in East Africa"
+                  width={1200}
+                  height={800}
+                  referrerPolicy="no-referrer"
+                  className="aspect-16/10 w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+                />
+                <div className="absolute bottom-3 left-3 right-3 rounded-xl bg-background/95 p-4 backdrop-blur-md border border-border/70 shadow-sm">
+                  <p className="text-xs font-bold uppercase tracking-wider text-accent">
+                    Solar Cold Storage & Aggregation
+                  </p>
+                  <p className="text-xs text-foreground/85 mt-1">
+                    Solar-powered cold storage units deployed across farm clusters cut post-harvest
+                    spoilage by 30% while preserving prime commercial freshness.
+                  </p>
+                </div>
+              </div>
+            </Reveal>
+
+            <Reveal delay={180}>
+              <div className="space-y-4">
+                <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-secondary text-primary font-bold text-sm">
+                      01
+                    </span>
+                    <div>
+                      <h3 className="font-bold text-foreground">
+                        High-Quality Agricultural Inputs
+                      </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Certified seeds, drought-resilient crop varieties, and precision inputs
+                        delivered straight to smallholders.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-secondary text-primary font-bold text-sm">
+                      02
+                    </span>
+                    <div>
+                      <h3 className="font-bold text-foreground">
+                        Field Aggregation & Quality Grading
+                      </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Decentralized sorting and grading convert scattered smallholder plots into
+                        dependable, contract-ready commercial volumes.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-xl border border-border bg-card p-6 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-secondary text-primary font-bold text-sm">
+                      03
+                    </span>
+                    <div>
+                      <h3 className="font-bold text-foreground">
+                        Solar Cold Storage & B2B Marketplace
+                      </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Cold storage prevents distress selling, while our integrated digital
+                        marketplace secures direct off-take with commercial buyers.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="pt-2 flex flex-wrap gap-3">
+                  <Button asChild variant="gold" size="lg">
+                    <Link to="/shop">
+                      Explore Commodities Catalog <ArrowRight className="ml-1 h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <Button asChild variant="outline" size="lg">
+                    <Link to="/services">Operational Details</Link>
+                  </Button>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
+      {/* About AgriLink EA Ltd Section Spotlight */}
+      <section className="bg-secondary/40 section-y">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] items-center">
+            <Reveal>
+              <p className="eyebrow">About AgriLink EA Ltd.</p>
+              <h2 className="mt-4 text-3xl font-extrabold uppercase sm:text-4xl text-foreground">
+                Transforming farming into a powerful engine for community development
+              </h2>
+              <p className="mt-6 text-base leading-relaxed text-foreground/90">
+                Welcome to AgriLink EA Ltd, where we transform farming into a powerful engine for
+                community development and economic resilience across East Africa. Scaling our impact
+                far beyond arid regions, our footprint extends across the agricultural landscapes of
+                Kenya and South Sudan.
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                We are dedicated to empowering smallholder farmers by delivering high-quality
+                agricultural inputs and connecting them directly to reliable B2B buyers through our
+                integrated digital marketplace. Backed by advanced cold-storage facilities, we
+                actively protect regional food security and reduce post-harvest losses by 30%,
+                turning sustainable farming into lasting prosperity.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Button asChild variant="gold" size="lg">
+                  <Link to="/about">
+                    Read Our Full Story <ArrowRight />
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" size="lg">
+                  <Link to="/partner">Partner With Us</Link>
+                </Button>
+              </div>
+            </Reveal>
+
+            <Reveal delay={150}>
+              <div className="rounded-2xl border border-border bg-card p-8 shadow-sm">
+                <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-accent">
+                  East Africa Footprint
+                </h3>
+                <div className="mt-6 space-y-6">
+                  <div className="border-l-2 border-primary pl-4">
+                    <p className="text-2xl font-extrabold text-primary">30%</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      Post-Harvest Loss Reduction
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Through decentralized solar-powered cold storage infrastructure
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-gold pl-4">
+                    <p className="text-2xl font-extrabold text-gold">2 Countries</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      Kenya & South Sudan Corridors
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Expanding vital agricultural supply chains and regional peace
+                    </p>
+                  </div>
+                  <div className="border-l-2 border-accent pl-4">
+                    <p className="text-2xl font-extrabold text-accent">Direct B2B</p>
+                    <p className="text-sm font-semibold text-foreground">
+                      Digital Marketplace Integration
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Connecting smallholder producers to bulk commercial off-takers
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </section>
+
       <section className="relative isolate overflow-hidden bg-background section-y">
         <DataPixels tone="dark" />
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal>
             <p className="eyebrow">Live impact metrics</p>
-            <h2 className="mt-4 text-3xl font-extrabold uppercase sm:text-4xl">Network at a glance</h2>
+            <h2 className="mt-4 text-3xl font-extrabold uppercase sm:text-4xl">
+              Network at a glance
+            </h2>
           </Reveal>
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {[
@@ -294,7 +491,8 @@ function Home() {
             Four critical infrastructure pillars
           </h2>
           <p className="mt-6 max-w-2xl text-primary-foreground/60">
-            We invite visionary investors, impact funds, and development partners to join us in scaling our operations across these high-yield infrastructure tracks.
+            We invite visionary investors, impact funds, and development partners to join us in
+            scaling our operations across these high-yield infrastructure tracks.
           </p>
         </Reveal>
 
@@ -330,27 +528,25 @@ function Home() {
       <section className="mx-auto max-w-7xl px-4 section-y sm:px-6 lg:px-8">
         <Reveal>
           <p className="eyebrow">Our presence</p>
-          <h2 className="mt-4 max-w-2xl text-3xl font-extrabold uppercase sm:text-4xl">
-            Offices
-          </h2>
+          <h2 className="mt-4 max-w-2xl text-3xl font-extrabold uppercase sm:text-4xl">Offices</h2>
         </Reveal>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
             {
-              name: "Kakuma Town",
+              name: "Nairobi & Turkana",
               country: "Kenya",
-              region: "Turkana County",
+              region: "Headquarters & Aggregation Trade Yards",
             },
             {
-              name: "Westlands, Nairobi",
-              country: "Kenya",
-              region: "Capital Office",
+              name: "Juba",
+              country: "South Sudan",
+              region: "Regional Operations & Corridor Desk",
             },
             {
               name: "New York",
               country: "United States",
-              region: "USA Operations",
+              region: "Global Partnerships & Investment",
             },
           ].map((office, i) => (
             <Reveal key={office.name} delay={i * 90}>
@@ -368,7 +564,6 @@ function Home() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 pb-4 sm:px-6 lg:px-8">
-
         <Reveal>
           <div className="surface-forest relative isolate overflow-hidden rounded-2xl px-8 py-14 text-center sm:px-14">
             <DataPixels tone="light" />

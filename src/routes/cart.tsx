@@ -76,8 +76,8 @@ function CartPage() {
                           {line.product.name}
                         </Link>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {line.product.category} · {line.product.grade} · ${line.product.pricePerUnit}{" "}
-                          per {line.product.unit}
+                          {line.product.category} · {line.product.grade} · $
+                          {line.product.pricePerUnit} per {line.product.unit}
                         </p>
                       </div>
                       <Button
@@ -99,7 +99,9 @@ function CartPage() {
                         >
                           <Minus />
                         </Button>
-                        <span className="w-14 text-center font-semibold tabular-nums">{line.qty}</span>
+                        <span className="w-14 text-center font-semibold tabular-nums">
+                          {line.qty}
+                        </span>
                         <Button
                           variant="outline"
                           size="icon"
@@ -108,7 +110,9 @@ function CartPage() {
                         >
                           <Plus />
                         </Button>
-                        <span className="ml-1 text-xs text-muted-foreground">{line.product.unit}</span>
+                        <span className="ml-1 text-xs text-muted-foreground">
+                          {line.product.unit}
+                        </span>
                       </div>
                       <span className="font-display text-lg font-extrabold">
                         ${line.total.toLocaleString()}

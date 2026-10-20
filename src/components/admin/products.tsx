@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function AdminProductsPage() {
-
   type Category = {
     id: string;
     name: string;
@@ -138,7 +137,6 @@ export default function AdminProductsPage() {
     setImageFile(null);
     setImagePreview(null);
 
-
     setModalOpen(true);
   }
 
@@ -160,9 +158,7 @@ export default function AdminProductsPage() {
       grade: product.grade ?? "",
       lead: product.lead ?? "",
       blurb: product.blurb ?? "",
-      spec: Array.isArray(product.spec)
-        ? product.spec.join("\n")
-        : "",
+      spec: Array.isArray(product.spec) ? product.spec.join("\n") : "",
       active: product.active,
       featured: product.featured,
       sort_order: String(product.sort_order ?? 0),
@@ -180,13 +176,9 @@ export default function AdminProductsPage() {
     setForm(emptyForm);
     setImageFile(null);
     setImagePreview(null);
-
   }
 
-  function updateForm<K extends keyof ProductForm>(
-    key: K,
-    value: ProductForm[K]
-  ) {
+  function updateForm<K extends keyof ProductForm>(key: K, value: ProductForm[K]) {
     setForm((current) => ({
       ...current,
       [key]: value,
@@ -227,8 +219,7 @@ export default function AdminProductsPage() {
        * Upload a new image only when the admin selected one.
        */
       if (imageFile) {
-        const fileExtension =
-          imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
+        const fileExtension = imageFile.name.split(".").pop()?.toLowerCase() || "jpg";
 
         const fileName = `${crypto.randomUUID()}.${fileExtension}`;
         const filePath = `products/${fileName}`;
@@ -242,9 +233,7 @@ export default function AdminProductsPage() {
           });
 
         if (uploadError) {
-          throw new Error(
-            `Image upload failed: ${uploadError.message}`
-          );
+          throw new Error(`Image upload failed: ${uploadError.message}`);
         }
 
         uploadedImagePath = filePath;
@@ -303,9 +292,7 @@ export default function AdminProductsPage() {
         }
 
         setProducts((current) =>
-          current.map((product) =>
-            product.id === editingProduct.id ? data : product
-          )
+          current.map((product) => (product.id === editingProduct.id ? data : product)),
         );
       } else {
         const { data, error } = await supabase
@@ -322,7 +309,7 @@ export default function AdminProductsPage() {
       }
 
       closeModal();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error saving product:", error);
 
       /*
@@ -330,28 +317,22 @@ export default function AdminProductsPage() {
        * remove the orphaned image from Storage.
        */
       if (uploadedImagePath) {
-        await supabase.storage
-          .from("product-images")
-          .remove([uploadedImagePath]);
+        await supabase.storage.from("product-images").remove([uploadedImagePath]);
       }
 
-      alert(error?.message ?? "Failed to save product.");
+      const errorMessage = error instanceof Error ? error.message : "Failed to save product.";
+      alert(errorMessage);
     } finally {
       setSaving(false);
     }
   }
 
   async function handleDelete(product: Product) {
-    const confirmed = window.confirm(
-      `Are you sure you want to delete "${product.name}"?`
-    );
+    const confirmed = window.confirm(`Are you sure you want to delete "${product.name}"?`);
 
     if (!confirmed) return;
 
-    const { error } = await supabase
-      .from("products")
-      .delete()
-      .eq("id", product.id);
+    const { error } = await supabase.from("products").delete().eq("id", product.id);
 
     if (error) {
       console.error("Error deleting product:", error);
@@ -359,9 +340,7 @@ export default function AdminProductsPage() {
       return;
     }
 
-    setProducts((current) =>
-      current.filter((item) => item.id !== product.id)
-    );
+    setProducts((current) => current.filter((item) => item.id !== product.id));
   }
 
   const filteredProducts = products.filter((product) => {
@@ -372,18 +351,13 @@ export default function AdminProductsPage() {
       product.name.toLowerCase().includes(searchValue) ||
       product.id.toLowerCase().includes(searchValue);
 
-    const matchesCategory =
-      selectedCategory === "all" ||
-      product.category_id === selectedCategory;
+    const matchesCategory = selectedCategory === "all" || product.category_id === selectedCategory;
 
     return matchesSearch && matchesCategory;
   });
 
   function getCategoryName(categoryId: string) {
-    return (
-      categories.find((category) => category.id === categoryId)?.name ??
-      "Unknown"
-    );
+    return categories.find((category) => category.id === categoryId)?.name ?? "Unknown";
   }
 
   return (
@@ -392,9 +366,7 @@ export default function AdminProductsPage() {
         {/* Header */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
-              Products
-            </h1>
+            <h1 className="text-2xl font-bold text-slate-900">Products</h1>
 
             <p className="mt-1 text-sm text-slate-500">
               Manage your AgriLink products and inventory.
@@ -440,14 +412,10 @@ export default function AdminProductsPage() {
         {/* Table */}
         <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
           {loading ? (
-            <div className="p-10 text-center text-sm text-slate-500">
-              Loading products...
-            </div>
+            <div className="p-10 text-center text-sm text-slate-500">Loading products...</div>
           ) : filteredProducts.length === 0 ? (
             <div className="p-10 text-center">
-              <p className="text-sm text-slate-500">
-                No products found.
-              </p>
+              <p className="text-sm text-slate-500">No products found.</p>
 
               <button
                 type="button"
@@ -498,10 +466,7 @@ export default function AdminProductsPage() {
 
                 <tbody className="divide-y divide-slate-100">
                   {filteredProducts.map((product) => (
-                    <tr
-                      key={product.id}
-                      className="transition hover:bg-slate-50"
-                    >
+                    <tr key={product.id} className="transition hover:bg-slate-50">
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           {/* Don't render anything when image is null */}
@@ -514,13 +479,9 @@ export default function AdminProductsPage() {
                           ) : null}
 
                           <div>
-                            <p className="font-semibold text-slate-900">
-                              {product.name}
-                            </p>
+                            <p className="font-semibold text-slate-900">{product.name}</p>
 
-                            <p className="mt-0.5 text-xs text-slate-400">
-                              {product.id}
-                            </p>
+                            <p className="mt-0.5 text-xs text-slate-400">{product.id}</p>
                           </div>
                         </div>
                       </td>
@@ -530,33 +491,25 @@ export default function AdminProductsPage() {
                       </td>
 
                       <td className="px-5 py-4 text-sm font-semibold text-slate-900">
-                        {Number(product.price_per_unit).toLocaleString(
-                          undefined,
-                          {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2,
-                          }
-                        )}
+                        {Number(product.price_per_unit).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
                       </td>
 
-                      <td className="px-5 py-4 text-sm text-slate-600">
-                        {product.unit}
-                      </td>
+                      <td className="px-5 py-4 text-sm text-slate-600">{product.unit}</td>
 
-                      <td className="px-5 py-4 text-sm text-slate-600">
-                        {product.moq}
-                      </td>
+                      <td className="px-5 py-4 text-sm text-slate-600">{product.moq}</td>
 
-                      <td className="px-5 py-4 text-sm text-slate-600">
-                        {product.stock}
-                      </td>
+                      <td className="px-5 py-4 text-sm text-slate-600">{product.stock}</td>
 
                       <td className="px-5 py-4">
                         <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${product.active
-                            ? "bg-green-100 text-green-700"
-                            : "bg-slate-100 text-slate-500"
-                            }`}
+                          className={`inline-flex rounded-full px-2.5 py-1 text-xs font-semibold ${
+                            product.active
+                              ? "bg-green-100 text-green-700"
+                              : "bg-slate-100 text-slate-500"
+                          }`}
                         >
                           {product.active ? "Active" : "Inactive"}
                         </span>
@@ -668,9 +621,7 @@ export default function AdminProductsPage() {
 
                     <select
                       value={form.category_id}
-                      onChange={(e) =>
-                        updateForm("category_id", e.target.value)
-                      }
+                      onChange={(e) => updateForm("category_id", e.target.value)}
                       className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100"
                       required
                     >
@@ -699,9 +650,7 @@ export default function AdminProductsPage() {
                     step="0.01"
                     min="0"
                     value={form.price_per_unit}
-                    onChange={(value) =>
-                      updateForm("price_per_unit", value)
-                    }
+                    onChange={(value) => updateForm("price_per_unit", value)}
                     placeholder="410"
                   />
 
@@ -757,9 +706,7 @@ export default function AdminProductsPage() {
                     label="Sort Order"
                     type="number"
                     value={form.sort_order}
-                    onChange={(value) =>
-                      updateForm("sort_order", value)
-                    }
+                    onChange={(value) => updateForm("sort_order", value)}
                     placeholder="0"
                   />
                 </div>
@@ -775,9 +722,7 @@ export default function AdminProductsPage() {
                   <TextAreaField
                     label="Description"
                     value={form.description}
-                    onChange={(value) =>
-                      updateForm("description", value)
-                    }
+                    onChange={(value) => updateForm("description", value)}
                     placeholder="Detailed product description..."
                   />
 
@@ -809,40 +754,29 @@ export default function AdminProductsPage() {
                     <input
                       type="checkbox"
                       checked={form.active}
-                      onChange={(e) =>
-                        updateForm("active", e.target.checked)
-                      }
+                      onChange={(e) => updateForm("active", e.target.checked)}
                       className="h-4 w-4 rounded border-slate-300 text-green-600 focus:ring-green-500"
                     />
 
-                    <span className="text-sm text-slate-700">
-                      Active
-                    </span>
+                    <span className="text-sm text-slate-700">Active</span>
                   </label>
 
                   <label className="flex cursor-pointer items-center gap-2">
                     <input
                       type="checkbox"
                       checked={form.featured}
-                      onChange={(e) =>
-                        updateForm("featured", e.target.checked)
-                      }
+                      onChange={(e) => updateForm("featured", e.target.checked)}
                       className="h-4 w-4 rounded border-slate-300 text-green-600 focus:ring-green-500"
                     />
 
-                    <span className="text-sm text-slate-700">
-                      Featured
-                    </span>
+                    <span className="text-sm text-slate-700">Featured</span>
                   </label>
                 </div>
               </section>
 
               {/* Image note */}
               <div className="rounded-lg border border-slate-300 bg-slate-50 p-4">
-                <label
-                  htmlFor="product-image"
-                  className="text-sm font-medium text-slate-700"
-                >
+                <label htmlFor="product-image" className="text-sm font-medium text-slate-700">
                   Product Image
                 </label>
 
@@ -872,9 +806,7 @@ export default function AdminProductsPage() {
                   className="mt-2 block w-full cursor-pointer rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 file:mr-4 file:rounded-md file:border-0 file:bg-green-600 file:px-4 file:py-2 file:text-sm file:font-medium file:text-white hover:file:bg-green-700"
                 />
 
-                <p className="mt-2 text-xs text-slate-500">
-                  JPG, PNG, or WebP. Maximum 5MB.
-                </p>
+                <p className="mt-2 text-xs text-slate-500">JPG, PNG, or WebP. Maximum 5MB.</p>
 
                 {imagePreview && (
                   <div className="mt-4">
@@ -903,11 +835,7 @@ export default function AdminProductsPage() {
                   disabled={saving}
                   className="rounded-lg bg-green-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {saving
-                    ? "Saving..."
-                    : editingProduct
-                      ? "Update Product"
-                      : "Add Product"}
+                  {saving ? "Saving..." : editingProduct ? "Update Product" : "Add Product"}
                 </button>
               </div>
             </form>
@@ -981,9 +909,7 @@ function TextAreaField({
 }) {
   return (
     <div>
-      <label className="mb-1.5 block text-sm font-medium text-slate-700">
-        {label}
-      </label>
+      <label className="mb-1.5 block text-sm font-medium text-slate-700">{label}</label>
 
       <textarea
         value={value}

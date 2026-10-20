@@ -4,8 +4,8 @@ import logoAsset from "@/assets/agrilogo.png";
 
 export function Footer() {
   return (
-    <footer className="surface-forest mt-24">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-4 lg:px-8">
+    <footer className="surface-forest mt-12">
+      <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
         <div className="lg:col-span-1">
           <div className="flex items-center gap-3">
             <img
@@ -85,15 +85,11 @@ export function Footer() {
             </li>
             <li className="flex gap-2">
               <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              <span>Juba office ,South Sudan</span>
-            </li>
-            <li className="flex gap-2">
-              <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              <span>⁠New York, New York, United States.</span>
+              <span>Juba, South Sudan</span>
             </li>
             <li className="flex gap-2">
               <Mail className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
-              <span>partnerships@agrilinkkakuma.co.ke</span>
+              <span className="break-all">operations@agrilinkea.com</span>
             </li>
             <li className="flex gap-2">
               <Phone className="mt-0.5 h-4 w-4 shrink-0 text-gold" />
@@ -106,7 +102,7 @@ export function Footer() {
       <div className="border-t border-primary-foreground/15">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-primary-foreground/65 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>© {new Date().getFullYear()} AgriLink EA Ltd. All rights reserved.</p>
-          <p>Registered social enterprise · Kenya · South Sudan · New York, USA</p>
+          <p>Registered social enterprise · Kenya · South Sudan</p>
         </div>
       </div>
     </footer>

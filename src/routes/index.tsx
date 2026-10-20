@@ -16,6 +16,8 @@ import { Reveal } from "@/components/site/Reveal";
 import { Counter } from "@/components/site/Counter";
 import { DataPixels } from "@/components/site/DataPixels";
 import logoAsset from "@/assets/agrilogo.png";
+import heroGreenFarm from "@/assets/images/hero_green_farm_1792527487427.jpg";
+import farmCommodities from "@/assets/images/farm_commodities_1792527487698.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -163,13 +165,16 @@ function Home() {
               <div className="absolute -inset-8 rounded-[2rem] bg-gold/10 blur-3xl" aria-hidden />
               <figure className="frame-shadow relative overflow-hidden rounded-[1.75rem] border border-primary-foreground/20">
                 <img
-                  src="/src/assets/images/hero_green_farm_1792527487427.jpg"
+                  src={heroGreenFarm}
                   alt="AgriLink EA Ltd - Lush green East African farming landscape with thriving crops and farmers"
                   width={1600}
                   height={1200}
                   referrerPolicy="no-referrer"
                   fetchPriority="high"
                   className="aspect-4/3 w-full object-cover sm:aspect-5/4"
+                  onError={(e) => {
+                    e.currentTarget.src = "/images/hero_green_farm.jpg";
+                  }}
                 />
                 <div
                   className="absolute inset-0 bg-linear-to-r from-primary-deep/80 via-transparent to-transparent"
@@ -292,12 +297,15 @@ function Home() {
             <Reveal delay={100}>
               <div className="relative overflow-hidden rounded-2xl border border-border shadow-elevate">
                 <img
-                  src="/src/assets/images/farm_commodities_1792527487698.jpg"
+                  src={farmCommodities}
                   alt="Farm to commodities - fresh agricultural harvest and solar cold storage hub in East Africa"
                   width={1200}
                   height={800}
                   referrerPolicy="no-referrer"
                   className="aspect-16/10 w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+                  onError={(e) => {
+                    e.currentTarget.src = "/images/farm_commodities.jpg";
+                  }}
                 />
                 <div className="absolute bottom-3 left-3 right-3 rounded-xl bg-background/95 p-4 backdrop-blur-md border border-border/70 shadow-sm">
                   <p className="text-xs font-bold uppercase tracking-wider text-accent">

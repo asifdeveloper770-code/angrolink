@@ -219,7 +219,7 @@ export const PRODUCTS: Product[] = [
     origin: "Turkana West Cooperatives",
     grade: "Grade 1",
     lead: "7–10 days",
-    blurb: "Nutritious beans from sustainable farming practices across arid regions.",
+    blurb: "Nutritious beans from sustainable farming practices across Kenya and South Sudan.",
     spec: ["Moisture ≤ 13%", "Purity ≥ 98%", "50kg bags", "Hand-sorted"],
   },
   {

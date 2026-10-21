@@ -204,10 +204,10 @@ function ProductView() {
                 <img
                   src={product.image}
                   alt={product.name}
+                  referrerPolicy="no-referrer"
                   className="h-auto max-h-[500px] w-full object-cover"
                   onError={(e) => {
-                    e.currentTarget.src =
-                      "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80";
+                    e.currentTarget.src = "/images/bulk_sorghum_sack.jpg";
                   }}
                 />
               </div>

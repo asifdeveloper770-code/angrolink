@@ -273,23 +273,26 @@ function Shop() {
                 <Reveal key={p.id} delay={(i % 4) * 70}>
                   <article className="lift flex h-full flex-col overflow-hidden rounded-xl border border-border bg-card hover:border-accent">
                     {/* Product Image */}
-                    <div className="aspect-[4/3] w-full overflow-hidden bg-secondary">
+                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-secondary">
                       {p.image ? (
                         <img
                           src={p.image}
                           alt={p.name}
                           className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                           loading="lazy"
+                          referrerPolicy="no-referrer"
                           onError={(e) => {
-                            e.currentTarget.src =
-                              "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80";
+                            e.currentTarget.src = "/images/bulk_sorghum_sack.jpg";
                           }}
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                          No image available
+                          Bulk Commodity
                         </div>
                       )}
+                      <div className="absolute top-2.5 left-2.5 rounded-full bg-black/70 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md border border-white/20">
+                        {p.unit}
+                      </div>
                     </div>
 
                     {/* Product Content */}

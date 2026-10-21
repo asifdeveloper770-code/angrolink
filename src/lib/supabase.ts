@@ -233,9 +233,9 @@ const DEFAULT_CONTACTS: ContactSubmission[] = [
 function getStore<T>(key: string, initial: T[]): T[] {
   if (typeof window === "undefined") return initial;
   try {
-    const raw = localStorage.getItem(`agrilink_${key}`);
+    const raw = localStorage.getItem(`agrilink_v2_${key}`);
     if (!raw) {
-      localStorage.setItem(`agrilink_${key}`, JSON.stringify(initial));
+      localStorage.setItem(`agrilink_v2_${key}`, JSON.stringify(initial));
       return initial;
     }
     return JSON.parse(raw);
@@ -247,7 +247,7 @@ function getStore<T>(key: string, initial: T[]): T[] {
 function setStore<T>(key: string, list: T[]): void {
   if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(`agrilink_${key}`, JSON.stringify(list));
+    localStorage.setItem(`agrilink_v2_${key}`, JSON.stringify(list));
   } catch (err) {
     console.warn("localStorage write error:", err);
   }

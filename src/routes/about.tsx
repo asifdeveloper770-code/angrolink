@@ -8,13 +8,13 @@ import ourWork from "@/assets/images/agrilink_our_work.jpg";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About AgriLink EA Ltd. — Empowering East African Agriculture" },
+      { title: "About AgriLink EA Ltd — Empowering East African Agriculture" },
       {
         name: "description",
         content:
           "Welcome to AgriLink EA Ltd: transforming farming into a powerful engine for community development and economic resilience across Kenya and South Sudan.",
       },
-      { property: "og:title", content: "About AgriLink EA Ltd." },
+      { property: "og:title", content: "About AgriLink EA Ltd" },
       {
         property: "og:description",
         content:
@@ -30,7 +30,7 @@ const TEAM = [
     name: "Dr. Akiru Lomorukai",
     role: "Chief Executive Officer",
     creds: "PhD Agricultural Economics, University of Nairobi · Former ASAL policy advisor",
-    bio: "Led drought-response market systems programming across three counties before founding AgriLink EA Ltd.",
+    bio: "Led drought-response market systems programming across three counties before founding AgriLink EA Ltd",
   },
   {
     name: "Hassan Mwikali",
@@ -82,7 +82,7 @@ function About() {
               <span>Empowering East African Agriculture 🌍✨</span>
             </div>
             <h1 className="max-w-4xl font-display text-[clamp(2.1rem,5.5vw,3.8rem)] font-extrabold uppercase leading-[1] text-balance-tight">
-              About AgriLink EA Ltd.
+              About AgriLink EA Ltd
             </h1>
             <p className="mt-6 max-w-3xl text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
               Welcome to AgriLink EA Ltd, where we transform farming into a powerful engine for

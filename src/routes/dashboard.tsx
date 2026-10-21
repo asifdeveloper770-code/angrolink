@@ -40,7 +40,7 @@ import { AlertCircle, Trash2, Edit2, X } from "lucide-react";
 export const Route = createFileRoute("/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard — AgriLink EA Ltd." },
+      { title: "Dashboard — AgriLink EA Ltd" },
       {
         name: "description",
         content: "Admin dashboard for managing services, knowledge hub, and orders.",
@@ -110,27 +110,27 @@ function Dashboard() {
   const contactTotalPages = Math.max(1, Math.ceil(contacts.length / PAGE_SIZE));
 
   useEffect(() => {
-    checkAuth();
-  }, []);
+    async function checkAuth() {
+      setAuthLoading(true);
 
-  async function checkAuth() {
-    setAuthLoading(true);
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+      if (!session) {
+        navigate({
+          to: "/login",
+          replace: true,
+        });
+        return;
+      }
 
-    if (!session) {
-      navigate({
-        to: "/login",
-        replace: true,
-      });
-      return;
+      setAuthLoading(false);
+      loadData();
     }
 
-    setAuthLoading(false);
-    loadData();
-  }
+    checkAuth();
+  }, [navigate]);
 
   async function loadData() {
     setLoading(true);

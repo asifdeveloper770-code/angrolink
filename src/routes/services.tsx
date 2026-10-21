@@ -10,13 +10,13 @@ import { EA_COUNTRY_PATHS, EA_MAP_VIEWBOX, type EACountryId } from "@/lib/east-a
 export const Route = createFileRoute("/services")({
   head: () => ({
     meta: [
-      { title: "Services & Operational Pillars — AgriLink EA Ltd." },
+      { title: "Services & Operational Pillars — AgriLink EA Ltd" },
       {
         name: "description",
         content:
           "Agricultural inputs, aggregation, solar cold-chain logistics and market intelligence services across Kenya and South Sudan trade corridors.",
       },
-      { property: "og:title", content: "Services & Operational Pillars — AgriLink EA Ltd." },
+      { property: "og:title", content: "Services & Operational Pillars — AgriLink EA Ltd" },
       {
         property: "og:description",
         content:

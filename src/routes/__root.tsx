@@ -81,14 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "AgriLink EA Ltd. — Empowering East African Agriculture" },
+      { title: "AgriLink EA Ltd — Empowering East African Agriculture" },
       {
         name: "description",
         content:
           "AgriLink EA Ltd connects farmers directly to B2B buyers through a digital marketplace, delivering inputs and solar cold storage across Kenya and South Sudan.",
       },
-      { name: "author", content: "AgriLink EA Ltd." },
-      { property: "og:title", content: "AgriLink EA Ltd. — Empowering East African Agriculture" },
+      { name: "author", content: "AgriLink EA Ltd" },
+      { property: "og:title", content: "AgriLink EA Ltd — Empowering East African Agriculture" },
       {
         property: "og:description",
         content:

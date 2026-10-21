@@ -21,13 +21,13 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/partner")({
   head: () => ({
     meta: [
-      { title: "Partner With Us — Intake Portals | AgriLink EA Ltd." },
+      { title: "Partner With Us — Intake Portals | AgriLink EA Ltd" },
       {
         name: "description",
         content:
           "Register as a farmer, submit a commercial off-taker inquiry, or apply as a logistics partner with AgriLink EA Ltd across Kenya and South Sudan.",
       },
-      { property: "og:title", content: "Partner With Us — AgriLink EA Ltd. Intake Portals" },
+      { property: "og:title", content: "Partner With Us — AgriLink EA Ltd Intake Portals" },
       {
         property: "og:description",
         content:

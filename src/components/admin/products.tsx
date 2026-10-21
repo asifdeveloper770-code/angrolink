@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export default function AdminProductsPage() {
   type Category = {
@@ -112,14 +113,14 @@ export default function AdminProductsPage() {
 
     if (productsResult.error) {
       console.error("Error loading products:", productsResult.error);
-      alert(productsResult.error.message);
+      toast.error(productsResult.error.message);
     } else {
       setProducts(productsResult.data ?? []);
     }
 
     if (categoriesResult.error) {
       console.error("Error loading categories:", categoriesResult.error);
-      alert(categoriesResult.error.message);
+      toast.error(categoriesResult.error.message);
     } else {
       setCategories(categoriesResult.data ?? []);
     }
@@ -189,22 +190,22 @@ export default function AdminProductsPage() {
     e.preventDefault();
 
     if (!form.id.trim()) {
-      alert("Product ID is required.");
+      toast.error("Product ID is required.");
       return;
     }
 
     if (!form.category_id) {
-      alert("Please select a category.");
+      toast.error("Please select a category.");
       return;
     }
 
     if (!form.name.trim()) {
-      alert("Product name is required.");
+      toast.error("Product name is required.");
       return;
     }
 
     if (!form.unit.trim()) {
-      alert("Unit is required.");
+      toast.error("Unit is required.");
       return;
     }
 
@@ -321,7 +322,7 @@ export default function AdminProductsPage() {
       }
 
       const errorMessage = error instanceof Error ? error.message : "Failed to save product.";
-      alert(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setSaving(false);
     }
@@ -336,10 +337,11 @@ export default function AdminProductsPage() {
 
     if (error) {
       console.error("Error deleting product:", error);
-      alert(error.message);
+      toast.error(error.message);
       return;
     }
 
+    toast.success("Product deleted successfully.");
     setProducts((current) => current.filter((item) => item.id !== product.id));
   }
 
@@ -794,7 +796,7 @@ export default function AdminProductsPage() {
 
                     // 5 MB limit
                     if (file.size > 5 * 1024 * 1024) {
-                      alert("Image must be smaller than 5MB.");
+                      toast.error("Image must be smaller than 5MB.");
                       e.target.value = "";
                       setImageFile(null);
                       return;

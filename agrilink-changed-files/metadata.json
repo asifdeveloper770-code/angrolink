@@ -1,6 +1,0 @@
-{
-  "name": "AgriLink EA Ltd",
-  "description": "AgriLink EA Ltd: connecting farmers to markets, inputs, and solar cold storage across Kenya and South Sudan.",
-  "permissions": [],
-  "capabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}

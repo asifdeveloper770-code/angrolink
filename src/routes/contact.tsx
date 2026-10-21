@@ -21,13 +21,13 @@ import { submitContactForm } from "@/lib/supabase";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact — AgriLink EA Ltd. | Kenya & South Sudan" },
+      { title: "Contact — AgriLink EA Ltd | Kenya & South Sudan" },
       {
         name: "description",
         content:
-          "Reach the AgriLink EA Ltd. team: corporate contact form, business emails, operational phone lines and office locations in Kenya and South Sudan.",
+          "Reach the AgriLink EA Ltd team: corporate contact form, business emails, operational phone lines and office locations in Kenya and South Sudan.",
       },
-      { property: "og:title", content: "Contact AgriLink EA Ltd." },
+      { property: "og:title", content: "Contact AgriLink EA Ltd" },
       {
         property: "og:description",
         content:

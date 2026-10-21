@@ -15,7 +15,7 @@ export const Route = createFileRoute("/shop/")({
   head: () => ({
     meta: [
       {
-        title: "B2B Commodity Catalog — AgriLink EA Ltd.",
+        title: "B2B Commodity Catalog — AgriLink EA Ltd",
       },
       {
         name: "description",
@@ -24,7 +24,7 @@ export const Route = createFileRoute("/shop/")({
       },
       {
         property: "og:title",
-        content: "B2B Commodity Catalog — AgriLink EA Ltd.",
+        content: "B2B Commodity Catalog — AgriLink EA Ltd",
       },
       {
         property: "og:description",
@@ -83,7 +83,7 @@ function Shop() {
       lead: p.lead,
       blurb: p.blurb,
       spec: p.spec,
-      image: null,
+      image: p.image,
       active: true,
     }));
 
@@ -171,7 +171,7 @@ function Shop() {
           lead: product.lead || "",
           blurb: product.blurb || product.description || "",
           spec: Array.isArray(product.spec) ? product.spec : [],
-          image: product.image || null,
+          image: product.image || PRODUCTS.find((p) => p.id === product.id)?.image || null,
           active: product.active,
         }),
       );
@@ -280,6 +280,10 @@ function Shop() {
                           alt={p.name}
                           className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                           loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.src =
+                              "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80";
+                          }}
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center text-sm text-muted-foreground">

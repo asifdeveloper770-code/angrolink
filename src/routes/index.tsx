@@ -17,14 +17,14 @@ import { Counter } from "@/components/site/Counter";
 import { DataPixels } from "@/components/site/DataPixels";
 import logoAsset from "@/assets/agrilogo.png";
 import heroPhoto from "@/assets/images/agrilink_hero_cold_storage.jpg";
-import farmCommodities from "@/assets/images/farm_commodities_1792527487698.jpg";
+import solarColdHub from "@/assets/images/m.jpg";
 import southSudanFarm from "@/assets/images/south_sudan_farm.jpg";
 import ourWork from "@/assets/images/agrilink_our_work.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "AgriLink EA Ltd. — Empowering East African Agriculture" },
+      { title: "AgriLink EA Ltd — Empowering East African Agriculture" },
       {
         name: "description",
         content:
@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "AgriLink EA Ltd. — Empowering East African Agriculture",
+        content: "AgriLink EA Ltd — Empowering East African Agriculture",
       },
       {
         property: "og:description",
@@ -120,9 +120,9 @@ function Home() {
                 <span>Empowering East African Agriculture 🌍✨</span>
               </div>
               <h1 className="mt-5 font-display text-[clamp(2.6rem,7.4vw,5.4rem)] font-extrabold uppercase leading-[0.92] tracking-[-0.045em] text-balance-tight">
-                AGRI<span className="text-gold">LINK</span>
+                AGRI<span className="text-[#488C3E] dark:text-emerald-400">LINK</span>
                 <br />
-                EA LTD.
+                EA LTD
               </h1>
             </Reveal>
             <Reveal delay={140}>
@@ -188,7 +188,7 @@ function Home() {
                 <figcaption className="absolute inset-x-0 bottom-0 flex items-center gap-3 bg-linear-to-t from-black/90 via-black/70 to-transparent p-5 pt-12 sm:p-6 sm:pt-14">
                   <img
                     src={logoAsset}
-                    alt="AgriLink EA Ltd. logo"
+                    alt="AgriLink EA Ltd logo"
                     width={56}
                     height={56}
                     referrerPolicy="no-referrer"
@@ -302,8 +302,8 @@ function Home() {
             <Reveal delay={100}>
               <div className="relative overflow-hidden rounded-2xl border border-border shadow-elevate">
                 <img
-                  src={farmCommodities}
-                  alt="Farm to commodities - fresh agricultural harvest and solar cold storage hub in East Africa"
+                  src={solarColdHub}
+                  alt="Solar Freeze AgriLink EA Ltd Cold Storage & Aggregation Hub with fresh farm produce"
                   width={1200}
                   height={800}
                   referrerPolicy="no-referrer"
@@ -312,15 +312,6 @@ function Home() {
                     e.currentTarget.src = "/images/farm_commodities.jpg";
                   }}
                 />
-                <div className="absolute bottom-3 left-3 right-3 rounded-xl bg-background/95 p-4 backdrop-blur-md border border-border/70 shadow-sm">
-                  <p className="text-xs font-bold uppercase tracking-wider text-accent">
-                    Solar Cold Storage & Aggregation
-                  </p>
-                  <p className="text-xs text-foreground/85 mt-1">
-                    Solar-powered cold storage units deployed across farm clusters cut post-harvest
-                    spoilage by 30% while preserving prime commercial freshness.
-                  </p>
-                </div>
               </div>
             </Reveal>
 
@@ -435,7 +426,7 @@ function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] items-center">
             <Reveal>
-              <p className="eyebrow">About AgriLink EA Ltd.</p>
+              <p className="eyebrow">About AgriLink EA Ltd</p>
               <h2 className="mt-4 text-3xl font-extrabold uppercase sm:text-4xl text-foreground">
                 Transforming farming into a powerful engine for community development
               </h2>

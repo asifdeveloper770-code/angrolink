@@ -11,10 +11,10 @@ import { Loader2, LockKeyhole } from "lucide-react";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Admin Login — AgriLink EA Ltd." },
+      { title: "Admin Login — AgriLink EA Ltd" },
       {
         name: "description",
-        content: "Secure admin login for AgriLink EA Ltd.",
+        content: "Secure admin login for AgriLink EA Ltd",
       },
     ],
   }),

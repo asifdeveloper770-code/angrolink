@@ -79,7 +79,7 @@ export const Route = createFileRoute("/shop/$productId")({
             lead: data.lead || "",
             blurb: data.blurb || data.description || "",
             spec: Array.isArray(data.spec) ? data.spec : [],
-            image: data.image || null,
+            image: data.image || findProduct(params.productId)?.image || null,
             active: data.active,
           };
 
@@ -106,7 +106,7 @@ export const Route = createFileRoute("/shop/$productId")({
         lead: localItem.lead,
         blurb: localItem.blurb,
         spec: localItem.spec,
-        image: null,
+        image: localItem.image,
         active: true,
       };
 
@@ -121,7 +121,7 @@ export const Route = createFileRoute("/shop/$productId")({
       return {
         meta: [
           {
-            title: "Commodity unavailable — AgriLink EA Ltd.",
+            title: "Commodity unavailable — AgriLink EA Ltd",
           },
           {
             name: "robots",
@@ -136,7 +136,7 @@ export const Route = createFileRoute("/shop/$productId")({
     return {
       meta: [
         {
-          title: `${p.name} — Wholesale ${p.category} | AgriLink EA Ltd.`,
+          title: `${p.name} — Wholesale ${p.category} | AgriLink EA Ltd`,
         },
         {
           name: "description",
@@ -144,7 +144,7 @@ export const Route = createFileRoute("/shop/$productId")({
         },
         {
           property: "og:title",
-          content: `${p.name} — AgriLink EA Ltd. B2B Catalog`,
+          content: `${p.name} — AgriLink EA Ltd B2B Catalog`,
         },
         {
           property: "og:description",
@@ -205,6 +205,10 @@ function ProductView() {
                   src={product.image}
                   alt={product.name}
                   className="h-auto max-h-[500px] w-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src =
+                      "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?auto=format&fit=crop&w=800&q=80";
+                  }}
                 />
               </div>
             )}

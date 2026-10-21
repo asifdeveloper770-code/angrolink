@@ -10,6 +10,7 @@ export type Product = {
   lead: string;
   blurb: string;
   spec: string[];
+  image: string;
 };
 
 export const PRODUCTS: Product[] = [
@@ -25,6 +26,8 @@ export const PRODUCTS: Product[] = [
     lead: "7–10 days",
     blurb: "Drought-tolerant cereal aggregated from 400+ smallholder plots along the Tarach belt.",
     spec: ["Moisture ≤ 13%", "Foreign matter ≤ 1%", "Aflatoxin < 10 ppb", "50kg PP bags"],
+    image:
+      "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "green-grams",
@@ -38,6 +41,8 @@ export const PRODUCTS: Product[] = [
     lead: "10–14 days",
     blurb: "High-protein pulse with consistent sizing, machine-cleaned at the Kakuma grading yard.",
     spec: ["Moisture ≤ 12%", "Purity ≥ 99%", "Hand-sorted", "25kg / 50kg bags"],
+    image:
+      "https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "cowpeas",
@@ -51,6 +56,8 @@ export const PRODUCTS: Product[] = [
     lead: "10–14 days",
     blurb: "Dual-purpose legume supporting soil nitrogen fixation across climate-smart rotations.",
     spec: ["Moisture ≤ 13%", "Split ≤ 2%", "Fumigated", "50kg bags"],
+    image:
+      "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "sukuma-wiki",
@@ -64,6 +71,8 @@ export const PRODUCTS: Product[] = [
     lead: "24–48 hrs",
     blurb: "Cold-chain leafy greens harvested at dawn and pre-cooled within four hours.",
     spec: ["Cold chain 2–6°C", "Field-washed", "Vented crates", "Same-day dispatch"],
+    image:
+      "https://images.unsplash.com/photo-1524179091875-bf99a9a6fa57?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "tomatoes",
@@ -77,6 +86,8 @@ export const PRODUCTS: Product[] = [
     lead: "24–72 hrs",
     blurb: "Firm determinate varieties graded for institutional catering and retail packhouses.",
     spec: ["Uniform sizing", "Cold chain 8–12°C", "Ventilated crates", "Traceable lot codes"],
+    image:
+      "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "goat-meat",
@@ -91,6 +102,8 @@ export const PRODUCTS: Product[] = [
     blurb:
       "Veterinary-inspected small stock sourced through mobile pastoralist aggregation points.",
     spec: ["Vet certificate", "Cold chain 0–4°C", "Halal slaughter", "Lot traceability"],
+    image:
+      "https://images.unsplash.com/photo-1516467508483-a7212febe31a?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "sesame",
@@ -104,6 +117,8 @@ export const PRODUCTS: Product[] = [
     lead: "14–21 days",
     blurb: "Export-grade whitish sesame consolidated for cross-border freight to Juba and Kampala.",
     spec: ["Oil content ≥ 48%", "Purity ≥ 99.5%", "Moisture ≤ 7%", "Export documentation"],
+    image:
+      "https://images.unsplash.com/photo-1608797178974-15b35a61dd73?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "honey",
@@ -117,6 +132,8 @@ export const PRODUCTS: Product[] = [
     lead: "7–12 days",
     blurb: "Single-origin acacia honey from arid-land apiaries managed by women-led collectives.",
     spec: ["Moisture ≤ 19%", "Unheated", "Food-grade drums", "Lab report included"],
+    image:
+      "https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "onions",
@@ -130,6 +147,8 @@ export const PRODUCTS: Product[] = [
     lead: "3–5 days",
     blurb: "Fresh, quality onions sourced from local farmers and aggregation points.",
     spec: ["Fresh grade", "50kg bags", "Field-washed", "Cold storage available"],
+    image:
+      "https://images.unsplash.com/photo-1618512496248-a07fe83aa8cb?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "spinach",
@@ -143,6 +162,8 @@ export const PRODUCTS: Product[] = [
     lead: "24–48 hrs",
     blurb: "Nutrient-rich spinach from irrigated production zones with cold-chain preservation.",
     spec: ["Cold chain 2–6°C", "Field-washed", "Vented crates", "Daily harvest"],
+    image:
+      "https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "okra",
@@ -156,6 +177,8 @@ export const PRODUCTS: Product[] = [
     lead: "24–48 hrs",
     blurb: "Premium okra with consistent sizing, harvested fresh and cold-chain processed.",
     spec: ["Uniform sizing", "Cold chain 8–12°C", "Ventilated crates", "Same-day dispatch"],
+    image:
+      "https://images.unsplash.com/photo-1425543103986-22abb7d7e8d2?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "wheat-flour",
@@ -169,6 +192,8 @@ export const PRODUCTS: Product[] = [
     lead: "5–7 days",
     blurb: "Milled wheat flour, ready for baking and institutional food preparation.",
     spec: ["Protein ≥ 11%", "Moisture ≤ 13%", "50kg bags", "Fortified"],
+    image:
+      "https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "rice",
@@ -182,6 +207,8 @@ export const PRODUCTS: Product[] = [
     lead: "7–10 days",
     blurb: "High-quality milled rice suitable for institutional catering and retail distribution.",
     spec: ["White rice", "Moisture ≤ 14%", "50kg bags", "Clean grain"],
+    image:
+      "https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "cooking-oil",
@@ -195,6 +222,8 @@ export const PRODUCTS: Product[] = [
     lead: "3–5 days",
     blurb: "Refined cooking oil suitable for domestic and commercial food preparation.",
     spec: ["Food grade", "Refined", "Various volumes", "Traceable sourcing"],
+    image:
+      "https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "maize",
@@ -208,6 +237,8 @@ export const PRODUCTS: Product[] = [
     lead: "5–7 days",
     blurb: "Dry shelled maize grain for milling, livestock feed, and food processing.",
     spec: ["Moisture ≤ 13%", "Foreign matter ≤ 1%", "50kg bags", "Fumigated"],
+    image:
+      "https://images.unsplash.com/photo-1551754655-cd27e38d2076?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "beans",
@@ -221,6 +252,8 @@ export const PRODUCTS: Product[] = [
     lead: "7–10 days",
     blurb: "Nutritious beans from sustainable farming practices across Kenya and South Sudan.",
     spec: ["Moisture ≤ 13%", "Purity ≥ 98%", "50kg bags", "Hand-sorted"],
+    image:
+      "https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "green-peas",
@@ -234,6 +267,8 @@ export const PRODUCTS: Product[] = [
     lead: "10–14 days",
     blurb: "High-protein green peas from irrigated plots with quality grading and preservation.",
     spec: ["Moisture ≤ 12%", "Purity ≥ 99%", "50kg bags", "Machine-cleaned"],
+    image:
+      "https://images.unsplash.com/photo-1587735243615-c03f25aaff15?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "eggs",
@@ -247,6 +282,8 @@ export const PRODUCTS: Product[] = [
     lead: "2–3 days",
     blurb: "Fresh eggs from managed poultry operations with daily collection and grading.",
     spec: ["Grade A", "Fresh daily", "Ventilated crates", "Cold storage ready"],
+    image:
+      "https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "solar-panels",
@@ -260,6 +297,8 @@ export const PRODUCTS: Product[] = [
     lead: "14–21 days",
     blurb: "High-efficiency solar panels for agricultural cold storage and equipment power.",
     spec: ["High efficiency", "Durable frame", "Weather-resistant", "Technical support"],
+    image:
+      "https://images.unsplash.com/photo-1509391365360-2e959784a276?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "drip-irrigation",
@@ -273,6 +312,8 @@ export const PRODUCTS: Product[] = [
     lead: "7–14 days",
     blurb: "Complete drip irrigation kits for precision watering and water conservation.",
     spec: ["Complete setup", "Water-efficient", "Easy installation", "Training included"],
+    image:
+      "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "hand-pumps",
@@ -286,6 +327,8 @@ export const PRODUCTS: Product[] = [
     lead: "5–7 days",
     blurb: "Durable hand-operated pumps for reliable water extraction in remote areas.",
     spec: ["Durable construction", "Easy maintenance", "High capacity", "Reliable"],
+    image:
+      "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "tractors",
@@ -299,6 +342,8 @@ export const PRODUCTS: Product[] = [
     lead: "30–45 days",
     blurb: "Reliable tractors for medium-scale agricultural operations and land preparation.",
     spec: ["Various sizes", "Low maintenance", "Spare parts available", "Operator training"],
+    image:
+      "https://images.unsplash.com/photo-1592982537447-7440770cbfc9?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "solar-sprayers",
@@ -312,6 +357,8 @@ export const PRODUCTS: Product[] = [
     lead: "10–14 days",
     blurb: "Eco-friendly solar-powered sprayers for pesticide and nutrient application.",
     spec: ["Solar-powered", "Efficient spray", "Ergonomic design", "Long battery"],
+    image:
+      "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&w=800&q=80",
   },
   {
     id: "smartphones-tablets",
@@ -325,6 +372,8 @@ export const PRODUCTS: Product[] = [
     lead: "7–14 days",
     blurb: "Rugged smartphones and tablets for farm data collection and market access.",
     spec: ["Android OS", "Durable", "Affordable", "Bundled with apps"],
+    image:
+      "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80",
   },
 ];
 

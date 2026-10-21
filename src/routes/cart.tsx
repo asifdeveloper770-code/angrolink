@@ -8,13 +8,13 @@ import { useQuoteCart } from "@/lib/quote-cart";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
-      { title: "Quote Cart — AgriLink EA Ltd. B2B Catalog" },
+      { title: "Quote Cart — AgriLink EA Ltd B2B Catalog" },
       {
         name: "description",
         content:
-          "Review the commodities in your AgriLink EA Ltd. quote cart and proceed to corporate checkout.",
+          "Review the commodities in your AgriLink EA Ltd quote cart and proceed to corporate checkout.",
       },
-      { property: "og:title", content: "Quote Cart — AgriLink EA Ltd." },
+      { property: "og:title", content: "Quote Cart — AgriLink EA Ltd" },
       { property: "og:description", content: "Review your wholesale commodity quote request." },
     ],
   }),

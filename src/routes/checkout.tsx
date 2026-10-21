@@ -23,13 +23,13 @@ import { submitCheckoutOrder } from "@/lib/supabase";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Corporate Checkout — AgriLink EA Ltd. B2B Catalog" },
+      { title: "Corporate Checkout — AgriLink EA Ltd B2B Catalog" },
       {
         name: "description",
         content:
           "Complete your wholesale quote request with company details, delivery terms and payment preferences.",
       },
-      { property: "og:title", content: "Corporate Checkout — AgriLink EA Ltd." },
+      { property: "og:title", content: "Corporate Checkout — AgriLink EA Ltd" },
       {
         property: "og:description",
         content: "Simulated corporate checkout for wholesale agricultural commodity quotes.",

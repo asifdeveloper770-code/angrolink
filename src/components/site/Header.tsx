@@ -178,15 +178,17 @@ export function Header() {
         >
           <img
             src={logoAsset}
-            alt="AgriLink EA Ltd. logo"
+            alt="AgriLink EA Ltd logo"
             width={48}
             height={48}
             referrerPolicy="no-referrer"
             className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-primary/20 shadow-sm transition-transform duration-200 group-hover:scale-105"
           />
           <div className="flex flex-col whitespace-nowrap">
-            <span className="font-display text-base font-extrabold uppercase tracking-tight sm:text-lg">
-              Agri<span className="text-accent">Link</span> EA Ltd.
+            <span className="font-display text-base font-black uppercase tracking-tight sm:text-xl text-[#183B2B] dark:text-emerald-100 flex items-center">
+              <span>AGRI</span>
+              <span className="text-[#488C3E] dark:text-emerald-400">LINK</span>
+              <span className="ml-1.5 text-[#183B2B] dark:text-emerald-100">EA LTD</span>
             </span>
             <span className="hidden text-[10px] font-semibold uppercase tracking-wider text-muted-foreground sm:block">
               Empowering East African Agriculture
